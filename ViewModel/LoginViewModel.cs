@@ -1,17 +1,15 @@
 ﻿using System;
-using System.ComponentModel; // Para INotifyPropertyChanged
-using System.Windows.Input; // Para ICommand
-// Asegúrese de que este using esté si ViewModelBase está en Helpers
+using System.ComponentModel; 
+using System.Windows.Input; 
 using LPAC___Proyecto_II_frontend.Helpers;
-// Asegúrese de que este using esté si RelayCommand está en Commands
 using LPAC___Proyecto_II_frontend.Commands;
 
-namespace LPAC___Proyecto_II_frontend.ViewModel // ¡Este namespace debe coincidir!
+namespace LPAC___Proyecto_II_frontend.ViewModel 
 {
-    public class LoginViewModel : ViewModelBase // Asegúrese que herede de ViewModelBase
+    public class LoginViewModel : ViewModelBase 
     {
         private string _usuario;
-        private string _contrasena; // <-- ¡Aquí está el campo privado!
+        private string _contrasena; 
         private string _mensajeError;
 
         public string Usuario
@@ -27,7 +25,7 @@ namespace LPAC___Proyecto_II_frontend.ViewModel // ¡Este namespace debe coincid
             }
         }
 
-        public string Contrasena // <-- ¡Esta es la propiedad que el error dice que no encuentra!
+        public string Contrasena 
         {
             get => _contrasena;
             set

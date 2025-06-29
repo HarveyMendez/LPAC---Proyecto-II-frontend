@@ -18,12 +18,11 @@ namespace LPAC___Proyecto_II_frontend.Services
         public ProductoService()
         {
             _httpClient = new HttpClient();
-            string baseUrlFromConfig = AppConfig.GetApiBaseUrl(); // Asumiendo que AppConfig.GetApiBaseUrl() existe y funciona
+            string baseUrlFromConfig = AppConfig.GetApiBaseUrl(); 
             _apiEndpoint = $"{baseUrlFromConfig}/api/Producto";
             _httpClient.BaseAddress = new Uri(baseUrlFromConfig);
         }
 
-        // Modificado para aceptar un parámetro de búsqueda
         public async Task<List<Producto>> GetAllProductosAsync(string searchTerm = null)
         {
             try
@@ -31,8 +30,7 @@ namespace LPAC___Proyecto_II_frontend.Services
                 string requestUrl = _apiEndpoint;
                 if (!string.IsNullOrWhiteSpace(searchTerm))
                 {
-                    // IMPORTANTE: Asegúrate de que tu backend API tenga un endpoint que soporte esto.
-                    // Por ejemplo: GET /api/Producto?nombreProducto=searchTerm
+                    
                     requestUrl += $"?nombreProducto={Uri.EscapeDataString(searchTerm)}";
                 }
 
