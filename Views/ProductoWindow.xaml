@@ -8,6 +8,10 @@
              mc:Ignorable="d"
              d:DesignHeight="700" d:DesignWidth="950">
 
+    <UserControl.DataContext>
+        <viewModel:ProductoViewModel/>
+    </UserControl.DataContext>
+
     <UserControl.Resources>
         <Style TargetType="TextBlock">
             <Setter Property="Foreground" Value="#e0e0e0"/>
@@ -259,9 +263,7 @@
                           ItemsSource="{Binding Categorias}"
                           DisplayMemberPath="descripcion"
                           SelectedValuePath="codCategoria"
-                          SelectedValue="{Binding ProductoActual.codCategoria, Mode=TwoWay}"
-                          SelectedItem="{Binding SelectedCategoria, Mode=TwoWay}"
-                          />
+                          SelectedItem="{Binding SelectedCategoria, Mode=TwoWay}"/>
                 <Label Content="Punto Reorden:" Grid.Row="1" Grid.Column="3" VerticalAlignment="Center" Margin="0,8,0,0"/>
                 <TextBox Grid.Row="1" Grid.Column="4" Text="{Binding ProductoActual.puntoReorden, UpdateSourceTrigger=PropertyChanged}" Margin="0,8,0,0"/>
 
@@ -273,10 +275,11 @@
             </Grid>
         </Border>
 
-        <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,16,0,0">
-            <Button Content="Guardar" Command="{Binding GuardarProductoCommand}" Style="{StaticResource AccentButtonStyle}"/>
-            <Button Content="Eliminar" Command="{Binding EliminarProductoCommand}" Style="{StaticResource DestructiveButtonStyle}"/>
-            <Button Content="Limpiar" Command="{Binding LimpiarFormularioCommand}" Style="{StaticResource DarkButtonStyle}"/>
+        <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,12,0,0">
+            <Button Content="Nuevo/Limpiar" Command="{Binding NuevoProductoCommand}" Style="{StaticResource DarkButtonStyle}"/>
+            <Button Content="Guardar" Command="{Binding GuardarProductoCommand}" Style="{StaticResource AccentButtonStyle}" Margin="8,0,0,0"/>
+            <Button Content="Eliminar" Command="{Binding EliminarProductoCommand}" Style="{StaticResource DestructiveButtonStyle}" Margin="8,0,0,0"/>
         </StackPanel>
+
     </Grid>
 </UserControl>

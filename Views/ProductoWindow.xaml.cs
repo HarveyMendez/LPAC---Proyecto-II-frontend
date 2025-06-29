@@ -1,4 +1,5 @@
-﻿using System.Windows.Controls;
+﻿using LPAC___Proyecto_II_frontend.ViewModel;
+using System.Windows.Controls;
 
 namespace LPAC___Proyecto_II_frontend.Views
 {
@@ -7,6 +8,7 @@ namespace LPAC___Proyecto_II_frontend.Views
         public ProductoWindow()
         {
             InitializeComponent();
+            this.DataContext = new ProductoViewModel();
         }
     }
 }

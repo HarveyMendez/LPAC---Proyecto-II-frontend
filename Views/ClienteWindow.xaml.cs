@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using LPAC___Proyecto_II_frontend.ViewModel;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace LPAC___Proyecto_II_frontend.Views 
@@ -8,7 +9,8 @@ namespace LPAC___Proyecto_II_frontend.Views
     {
         public ClienteWindow()
         {
-            InitializeComponent();
+            InitializeComponent(); 
+            this.DataContext = new ClienteViewModel(); 
         }
     }
 }
