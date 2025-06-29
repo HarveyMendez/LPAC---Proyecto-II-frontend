@@ -6,52 +6,94 @@
         xmlns:local="clr-namespace:LPAC___Proyecto_II_frontend.Views"
         xmlns:viewModel="clr-namespace:LPAC___Proyecto_II_frontend.ViewModel"
         mc:Ignorable="d"
-        Title="Gestión de Productos" Height="650" Width="900"
+        Title="Gestión de Productos" Height="700" Width="950"
         WindowStartupLocation="CenterScreen"
-        Background="#1e1e1e" Foreground="White">
+        Background="#1a1a1a" Foreground="White"
+        FontFamily="Segoe UI">
+
     <Window.DataContext>
         <viewModel:ProductoViewModel/>
     </Window.DataContext>
 
     <Window.Resources>
         <Style TargetType="TextBlock">
-            <Setter Property="Foreground" Value="LightGray"/>
+            <Setter Property="Foreground" Value="#e0e0e0"/>
+            <Setter Property="FontSize" Value="14"/>
         </Style>
+
         <Style TargetType="Label">
-            <Setter Property="Foreground" Value="LightGray"/>
+            <Setter Property="Foreground" Value="#b0b0b0"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Padding" Value="0,0,0,3"/>
         </Style>
+
         <Style TargetType="TextBox">
-            <Setter Property="Padding" Value="5"/>
-            <Setter Property="Background" Value="#333333"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="BorderBrush" Value="#555555"/>
+            <Setter Property="Padding" Value="8"/>
+            <Setter Property="Background" Value="#2a2a2a"/>
+            <Setter Property="Foreground" Value="#e0e0e0"/>
+            <Setter Property="BorderBrush" Value="#404040"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="CaretBrush" Value="White"/>
-        </Style>
-        <Style TargetType="ComboBox">
-            <Setter Property="Padding" Value="5"/>
-            <Setter Property="Background" Value="#333333"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="BorderBrush" Value="#555555"/>
-            <Setter Property="BorderThickness" Value="1"/>
-        </Style>
-        <Style TargetType="CheckBox">
-            <Setter Property="Foreground" Value="LightGray"/>
+            <Setter Property="MinHeight" Value="32"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+
+        <Style x:Key="CategoryComboBoxStyle" TargetType="ComboBox" BasedOn="{StaticResource {x:Type ComboBox}}">
+            <Setter Property="Padding" Value="8"/>
+            <Setter Property="Background" Value="#2a2a2a"/>
+            <Setter Property="Foreground" Value="#e0e0e0"/>
+            <Setter Property="BorderBrush" Value="#404040"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="MinHeight" Value="32"/>
+        </Style>
+
+        <Style TargetType="ComboBox">
+            <Setter Property="Padding" Value="8"/>
+            <Setter Property="Background" Value="#2a2a2a"/>
+            <Setter Property="Foreground" Value="#e0e0e0"/>
+            <Setter Property="BorderBrush" Value="#404040"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="MinHeight" Value="32"/>
+        </Style>
+
+        <Style TargetType="ComboBoxItem">
+            <Setter Property="Foreground" Value="#e0e0e0"/>
+            <Setter Property="Background" Value="#2a2a2a"/>
+            <Setter Property="Padding" Value="8"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#005A99"/>
+                    <Setter Property="Foreground" Value="White"/>
+                </Trigger>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="#007ACC"/>
+                    <Setter Property="Foreground" Value="White"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style TargetType="CheckBox">
+            <Setter Property="Foreground" Value="#b0b0b0"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="5"/>
         </Style>
 
         <Style x:Key="BaseButtonStyle" TargetType="Button">
             <Setter Property="Foreground" Value="White"/>
-            <Setter Property="BorderBrush" Value="#555555"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
             <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="Padding" Value="10,5"/>
-            <Setter Property="Margin" Value="5"/>
+            <Setter Property="Padding" Value="12,6"/>
+            <Setter Property="Margin" Value="8,0,0,0"/>
             <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="3">
+                        <Border Background="{TemplateBinding Background}" 
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}" 
+                                CornerRadius="4">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                     </ControlTemplate>
@@ -59,10 +101,14 @@
             </Setter>
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="#404040"/>
+                    <Setter Property="Effect">
+                        <Setter.Value>
+                            <DropShadowEffect BlurRadius="10" Opacity="0.3" ShadowDepth="0" Color="White"/>
+                        </Setter.Value>
+                    </Setter>
                 </Trigger>
                 <Trigger Property="IsPressed" Value="True">
-                    <Setter Property="Background" Value="#202020"/>
+                    <Setter Property="Opacity" Value="0.8"/>
                 </Trigger>
                 <Trigger Property="IsEnabled" Value="False">
                     <Setter Property="Opacity" Value="0.5"/>
@@ -71,35 +117,28 @@
         </Style>
 
         <Style x:Key="DarkButtonStyle" TargetType="Button" BasedOn="{StaticResource BaseButtonStyle}">
-            <Setter Property="Background" Value="#303030"/>
+            <Setter Property="Background" Value="#3a3a3a"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#4a4a4a"/>
+                </Trigger>
+            </Style.Triggers>
         </Style>
 
         <Style x:Key="AccentButtonStyle" TargetType="Button" BasedOn="{StaticResource BaseButtonStyle}">
-            <Setter Property="Background" Value="#007ACC"/>
+            <Setter Property="Background" Value="#0078D7"/>
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
                     <Setter Property="Background" Value="#006BBF"/>
-                </Trigger>
-                <Trigger Property="IsPressed" Value="True">
-                    <Setter Property="Background" Value="#005A99"/>
-                </Trigger>
-                <Trigger Property="IsEnabled" Value="False">
-                    <Setter Property="Opacity" Value="0.5"/>
                 </Trigger>
             </Style.Triggers>
         </Style>
 
         <Style x:Key="DestructiveButtonStyle" TargetType="Button" BasedOn="{StaticResource BaseButtonStyle}">
-            <Setter Property="Background" Value="#CC2936"/>
+            <Setter Property="Background" Value="#D13438"/>
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
                     <Setter Property="Background" Value="#B2242F"/>
-                </Trigger>
-                <Trigger Property="IsPressed" Value="True">
-                    <Setter Property="Background" Value="#991F28"/>
-                </Trigger>
-                <Trigger Property="IsEnabled" Value="False">
-                    <Setter Property="Opacity" Value="0.5"/>
                 </Trigger>
             </Style.Triggers>
         </Style>
@@ -107,7 +146,7 @@
         <Style TargetType="DataGrid">
             <Setter Property="Background" Value="#252525"/>
             <Setter Property="Foreground" Value="White"/>
-            <Setter Property="BorderBrush" Value="#444444"/>
+            <Setter Property="BorderBrush" Value="#404040"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="HeadersVisibility" Value="Column"/>
             <Setter Property="GridLinesVisibility" Value="Horizontal"/>
@@ -115,36 +154,41 @@
             <Setter Property="VerticalGridLinesBrush" Value="#3a3a3a"/>
             <Setter Property="RowBackground" Value="#252525"/>
             <Setter Property="AlternatingRowBackground" Value="#2a2a2a"/>
+            <Setter Property="RowHeight" Value="32"/>
+            <Setter Property="FontSize" Value="14"/>
         </Style>
+
         <Style TargetType="DataGridColumnHeader">
-            <Setter Property="Background" Value="#303030"/>
-            <Setter Property="Foreground" Value="LightGray"/>
-            <Setter Property="Padding" Value="8,5"/>
+            <Setter Property="Background" Value="#333333"/>
+            <Setter Property="Foreground" Value="#e0e0e0"/>
+            <Setter Property="Padding" Value="8,6"/>
             <Setter Property="HorizontalContentAlignment" Value="Left"/>
             <Setter Property="BorderBrush" Value="#444444"/>
             <Setter Property="BorderThickness" Value="0,0,1,1"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
         </Style>
+
         <Style TargetType="DataGridCell">
-            <Setter Property="Padding" Value="5"/>
+            <Setter Property="Padding" Value="8,6"/>
             <Setter Property="BorderBrush" Value="Transparent"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
         </Style>
+
         <Style TargetType="DataGridRow">
-            <Setter Property="Background" Value="#252525"/>
             <Style.Triggers>
                 <Trigger Property="IsSelected" Value="True">
                     <Setter Property="Background" Value="#005A99"/>
                     <Setter Property="Foreground" Value="White"/>
                 </Trigger>
                 <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="#404040"/>
+                    <Setter Property="Background" Value="#383838"/>
                 </Trigger>
             </Style.Triggers>
         </Style>
     </Window.Resources>
 
-    <Grid Margin="10">
+    <Grid Margin="12">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -153,44 +197,49 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <Border Grid.Row="0" Padding="8" CornerRadius="5" Background="#303030" Margin="0,0,0,15"
+        <Border Grid.Row="0" Padding="12" CornerRadius="4" Background="#252525" Margin="0,0,0,12"
                 BorderBrush="{Binding MensajeColor}" BorderThickness="1">
             <TextBlock Text="{Binding MensajeEstado}"
                        Foreground="{Binding MensajeColor}"
-                       HorizontalAlignment="Center" VerticalAlignment="Center"
-                       FontWeight="SemiBold" FontSize="14"/>
+                       HorizontalAlignment="Center" 
+                       FontWeight="SemiBold" 
+                       FontSize="15"/>
         </Border>
 
-        <Border Grid.Row="1" BorderBrush="#444444" BorderThickness="1" CornerRadius="5" Padding="15" Margin="0,0,0,15" Background="#252525">
+        <Border Grid.Row="1" BorderBrush="#404040" BorderThickness="1" CornerRadius="4" Padding="12" Margin="0,0,0,12" Background="#252525">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <Label Content="Buscar Producto:" VerticalAlignment="Center" Margin="0,0,10,0"/>
-                <TextBox Width="250" Text="{Binding TextoBusqueda, UpdateSourceTrigger=PropertyChanged}"/>
+                <Label Content="Buscar Producto:" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                <TextBox Width="300" Text="{Binding TextoBusqueda, UpdateSourceTrigger=PropertyChanged}"/>
                 <Button Content="Buscar" Command="{Binding BuscarProductosCommand}"
-                        Style="{StaticResource DarkButtonStyle}" Margin="15,0,0,0"/>
+                        Style="{StaticResource DarkButtonStyle}" Margin="12,0,0,0"/>
             </StackPanel>
         </Border>
 
-        <DataGrid Grid.Row="2" ItemsSource="{Binding ProductosEncontrados}"
-                  SelectedItem="{Binding ProductoActual}" AutoGenerateColumns="False" IsReadOnly="True" Margin="0,0,0,15"
-                  SelectionMode="Single">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="ID" Binding="{Binding idProducto}" Width="Auto"/>
-                <DataGridTextColumn Header="Nombre Producto" Binding="{Binding nombreProducto}" Width="*"/>
-                <DataGridTextColumn Header="Precio" Binding="{Binding precio, StringFormat=C}" Width="Auto"/>
-                <DataGridTextColumn Header="Categoría" Binding="{Binding codCategoria}" Width="Auto"/>
-                <DataGridTextColumn Header="Existencias" Binding="{Binding cantidadExistencias}" Width="Auto"/>
-                <DataGridTextColumn Header="Punto Reorden" Binding="{Binding puntoReorden}" Width="Auto"/>
-                <DataGridCheckBoxColumn Header="Aplica Impuesto" Binding="{Binding aplicaImpuesto}" Width="Auto"/>
-                <DataGridTextColumn Header="Talla" Binding="{Binding talla}" Width="Auto"/>
-                <DataGridCheckBoxColumn Header="Eliminado" Binding="{Binding eliminado}" Width="Auto"/>
-            </DataGrid.Columns>
-        </DataGrid>
+        <Border Grid.Row="2" BorderBrush="#404040" BorderThickness="1" CornerRadius="4" Margin="0,0,0,12">
+            <DataGrid ItemsSource="{Binding ProductosEncontrados}"
+                      SelectedItem="{Binding ProductoActual, Mode=TwoWay}" 
+                      AutoGenerateColumns="False" 
+                      IsReadOnly="True"
+                      SelectionMode="Single">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="ID" Binding="{Binding idProducto}" Width="Auto"/>
+                    <DataGridTextColumn Header="Nombre Producto" Binding="{Binding nombreProducto}" Width="*"/>
+                    <DataGridTextColumn Header="Precio" Binding="{Binding precio, StringFormat=C2}" Width="Auto"/>
+                    <DataGridTextColumn Header="Categoría" Binding="{Binding codCategoria}" Width="Auto"/>
+                    <DataGridTextColumn Header="Existencias" Binding="{Binding cantidadExistencias}" Width="Auto"/>
+                    <DataGridTextColumn Header="Punto Reorden" Binding="{Binding puntoReorden}" Width="Auto"/>
+                    <DataGridCheckBoxColumn Header="Aplica Impuesto" Binding="{Binding aplicaImpuesto}" Width="Auto"/>
+                    <DataGridTextColumn Header="Talla" Binding="{Binding talla}" Width="*"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Border>
 
-        <Border Grid.Row="3" BorderBrush="#444444" BorderThickness="1" CornerRadius="5" Padding="15" Background="#252525">
+        <Border Grid.Row="3" BorderBrush="#404040" BorderThickness="1" CornerRadius="4" Padding="12" Background="#252525">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="20"/>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
@@ -202,34 +251,38 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
-                <Label Content="Nombre:" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Margin="0,5,5,5"/>
-                <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding ProductoActual.nombreProducto, UpdateSourceTrigger=PropertyChanged}" Margin="0,5,5,5"/>
+                <Label Content="Nombre:" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center"/>
+                <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding ProductoActual.nombreProducto, UpdateSourceTrigger=PropertyChanged}"/>
 
-                <Label Content="Precio:" Grid.Row="0" Grid.Column="2" VerticalAlignment="Center" Margin="15,5,5,5"/>
-                <TextBox Grid.Row="0" Grid.Column="3" Text="{Binding ProductoActual.precio, UpdateSourceTrigger=PropertyChanged}" Margin="0,5,5,5"/>
+                <Label Content="Precio:" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Margin="0,8,0,0"/>
+                <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding ProductoActual.precio, UpdateSourceTrigger=PropertyChanged}" Margin="0,8,0,0"/>
 
-                <Label Content="Categoría (Código):" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Margin="0,5,5,5"/>
-                <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding ProductoActual.codCategoria, UpdateSourceTrigger=PropertyChanged}" Margin="0,5,5,5"/>
+                <Label Content="Existencias:" Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Margin="0,8,0,0"/>
+                <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding ProductoActual.cantidadExistencias, UpdateSourceTrigger=PropertyChanged}" Margin="0,8,0,0"/>
 
-                <Label Content="Existencias:" Grid.Row="1" Grid.Column="2" VerticalAlignment="Center" Margin="15,5,5,5"/>
-                <TextBox Grid.Row="1" Grid.Column="3" Text="{Binding ProductoActual.cantidadExistencias, UpdateSourceTrigger=PropertyChanged}" Margin="0,5,5,5"/>
+                <Label Content="Aplica Impuesto:" Grid.Row="3" Grid.Column="0" VerticalAlignment="Center" Margin="0,8,0,0"/>
+                <CheckBox Grid.Row="3" Grid.Column="1" IsChecked="{Binding ProductoActual.aplicaImpuesto}" VerticalAlignment="Center" Margin="0,8,0,0"/>
 
-                <Label Content="Punto Reorden:" Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Margin="0,5,5,5"/>
-                <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding ProductoActual.puntoReorden, UpdateSourceTrigger=PropertyChanged}" Margin="0,5,5,5"/>
+                <Label Content="Categoría:" Grid.Row="0" Grid.Column="3" VerticalAlignment="Center"/>
+                <ComboBox Grid.Row="0" Grid.Column="4"
+                          ItemsSource="{Binding Categorias}"
+                          DisplayMemberPath="descripcion"
+                          SelectedValuePath="codCategoria"
+                          SelectedValue="{Binding ProductoActual.codCategoria, Mode=TwoWay}"
+                          SelectedItem="{Binding SelectedCategoria, Mode=TwoWay}"
+                          />
+                <Label Content="Punto Reorden:" Grid.Row="1" Grid.Column="3" VerticalAlignment="Center" Margin="0,8,0,0"/>
+                <TextBox Grid.Row="1" Grid.Column="4" Text="{Binding ProductoActual.puntoReorden, UpdateSourceTrigger=PropertyChanged}" Margin="0,8,0,0"/>
 
-                <Label Content="Aplica Impuesto:" Grid.Row="2" Grid.Column="2" VerticalAlignment="Center" Margin="15,5,5,5"/>
-                <CheckBox Grid.Row="2" Grid.Column="3" IsChecked="{Binding ProductoActual.aplicaImpuesto}" VerticalAlignment="Center" Margin="0,5,5,5"/>
+                <Label Content="Talla:" Grid.Row="2" Grid.Column="3" VerticalAlignment="Center" Margin="0,8,0,0"/>
+                <TextBox Grid.Row="2" Grid.Column="4" Text="{Binding ProductoActual.talla, UpdateSourceTrigger=PropertyChanged}" Margin="0,8,0,0"/>
 
-                <Label Content="Talla:" Grid.Row="3" Grid.Column="0" VerticalAlignment="Center" Margin="0,5,5,5"/>
-                <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding ProductoActual.talla, UpdateSourceTrigger=PropertyChanged}" Margin="0,5,5,5"/>
-
-                <Label Content="Eliminado:" Grid.Row="3" Grid.Column="2" VerticalAlignment="Center" Margin="15,5,5,5"/>
-                <CheckBox Grid.Row="3" Grid.Column="3" IsChecked="{Binding ProductoActual.eliminado}" VerticalAlignment="Center" Margin="0,5,5,5"/>
-
+                <Label Content="Eliminado:" Grid.Row="3" Grid.Column="3" VerticalAlignment="Center" Margin="0,8,0,0"/>
+                <CheckBox Grid.Row="3" Grid.Column="4" IsChecked="{Binding ProductoActual.eliminado}" VerticalAlignment="Center" Margin="0,8,0,0"/>
             </Grid>
         </Border>
 
-        <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,20,0,0">
+        <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,16,0,0">
             <Button Content="Guardar" Command="{Binding GuardarProductoCommand}" Style="{StaticResource AccentButtonStyle}"/>
             <Button Content="Eliminar" Command="{Binding EliminarProductoCommand}" Style="{StaticResource DestructiveButtonStyle}"/>
             <Button Content="Limpiar" Command="{Binding LimpiarFormularioCommand}" Style="{StaticResource DarkButtonStyle}"/>
