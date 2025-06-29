@@ -1,15 +1,14 @@
-﻿using System.Windows; // Necesario para la clase Window
+﻿using System.Windows;
+using System.Windows.Controls;
 
-namespace LPAC___Proyecto_II_frontend.Views // Asegúrese que este namespace sea el mismo que usa para sus Views
+namespace LPAC___Proyecto_II_frontend.Views 
 {
-    /// <summary>
-    /// Lógica de interacción para ClienteWindow.xaml
-    /// </summary>
-    public partial class ClienteWindow : Window // 'partial' significa que parte de la clase está en el XAML
+
+    public partial class ClienteWindow : UserControl
     {
         public ClienteWindow()
         {
-            InitializeComponent(); // Este método es llamado automáticamente para cargar la interfaz del XAML
+            InitializeComponent();
         }
     }
 }

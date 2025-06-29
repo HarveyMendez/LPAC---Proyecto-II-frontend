@@ -2,9 +2,10 @@
 
 namespace LPAC___Proyecto_II_frontend.Views
 {
-    public partial class ProductoWindow : UserControl 
+    
+    public partial class EmpleadoWindow : UserControl
     {
-        public ProductoWindow()
+        public EmpleadoWindow()
         {
             InitializeComponent();
         }

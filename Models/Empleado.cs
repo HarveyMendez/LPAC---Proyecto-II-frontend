@@ -1,4 +1,5 @@
 ﻿using LPAC___Proyecto_II_frontend.Helpers;
+using LPAC___Proyecto_II_frontend.DTOs; 
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,5 +41,35 @@ namespace LPAC___Proyecto_II_frontend.Models
         public string TelefonoTrabajo { get => telefonoTrabajo; set { if (telefonoTrabajo != value) { telefonoTrabajo = value; OnPropertyChanged(nameof(TelefonoTrabajo)); } } }
         public int DeptoCod { get => deptoCod; set { if (deptoCod != value) { deptoCod = value; OnPropertyChanged(nameof(DeptoCod)); } } }
         public int IdRol { get => idRol; set { if (idRol != value) { idRol = value; OnPropertyChanged(nameof(IdRol)); } } }
+
+
+        public EmpleadoDTO ToDto()
+        {
+            return new EmpleadoDTO
+            {
+                idEmpleado = this.IdEmpleado,
+                nombreEmpleado = this.NombreEmpleado,
+                apellidosEmpleado = this.ApellidosEmpleado,
+                puesto = this.Puesto,
+                extension = this.Extension,
+                telefonoTrabajo = this.TelefonoTrabajo,
+                deptoCod = this.DeptoCod,
+                idRol = this.IdRol
+            };
+        }
+
+  
+        public Empleado FromDto(EmpleadoDTO dto)
+        {
+            this.IdEmpleado = dto.idEmpleado;
+            this.NombreEmpleado = dto.nombreEmpleado;
+            this.ApellidosEmpleado = dto.apellidosEmpleado;
+            this.Puesto = dto.puesto;
+            this.Extension = dto.extension;
+            this.TelefonoTrabajo = dto.telefonoTrabajo;
+            this.DeptoCod = dto.deptoCod;
+            this.IdRol = dto.idRol;
+            return this;
+        }
     }
 }
