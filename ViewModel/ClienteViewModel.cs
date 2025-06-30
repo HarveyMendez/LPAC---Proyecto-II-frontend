@@ -2,27 +2,34 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+
+using System.Threading.Tasks; // Required for Task and async/await
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Threading;
 using System.Windows;
-
 using LPAC___Proyecto_II_frontend.Models;
 using LPAC___Proyecto_II_frontend.Helpers;
 using LPAC___Proyecto_II_frontend.Commands;
-
+using LPAC___Proyecto_II_frontend.Services;
 namespace LPAC___Proyecto_II_frontend.ViewModel
 {
     public class ClienteViewModel : ViewModelBase
     {
+
+        // Collection to display clients in the DataGrid
         public ObservableCollection<Cliente> ClientesEncontrados { get; set; }
 
         private Cliente _clienteSeleccionado;
-        private Cliente _clienteActual;
-        private string _textoBusqueda;
-        private string _mensajeEstado;
-        private SolidColorBrush _mensajeColor;
+        private Cliente _clienteActual; // Object bound to the input form
+        private string _textoBusqueda = string.Empty;
+        private string _mensajeEstado = string.Empty;
+        private SolidColorBrush _mensajeColor = Brushes.Green; // Default to Green or a neutral color
 
+        // Instance of the service to interact with the backend
+        private readonly ClienteService _clienteService;
+
+
+        // Public properties with change notification
         public Cliente ClienteSeleccionado
         {
             get => _clienteSeleccionado;
@@ -32,24 +39,35 @@ namespace LPAC___Proyecto_II_frontend.ViewModel
                 {
                     _clienteSeleccionado = value;
                     OnPropertyChanged(nameof(ClienteSeleccionado));
+
+
+                    // Logic to load the selected client into the form for editing.
+                    // This is done by assigning a clone to ClienteActual.
                     if (_clienteSeleccionado != null)
                     {
-                        ClienteActual = (Cliente)Activator.CreateInstance(typeof(Cliente),
-                            _clienteSeleccionado.ClienteId,
-                            _clienteSeleccionado.NombreCompania,
-                            _clienteSeleccionado.NombreContacto,
-                            _clienteSeleccionado.ApellidoContacto,
-                            _clienteSeleccionado.PuestoContacto,
-                            _clienteSeleccionado.Direccion,
-                            _clienteSeleccionado.Ciudad,
-                            _clienteSeleccionado.Provincia,
-                            _clienteSeleccionado.CodigoPostal,
-                            _clienteSeleccionado.Pais,
-                            _clienteSeleccionado.Telefono,
-                            _clienteSeleccionado.NumFax);
+                        // Creates a new instance and copies the properties. This prevents editing the item in the collection directly.
+                        ClienteActual = new Cliente
+                        {
+                            ClienteId = _clienteSeleccionado.ClienteId,
+                            NombreCompania = _clienteSeleccionado.NombreCompania,
+                            NombreContacto = _clienteSeleccionado.NombreContacto,
+                            ApellidoContacto = _clienteSeleccionado.ApellidoContacto,
+                            PuestoContacto = _clienteSeleccionado.PuestoContacto,
+                            Direccion = _clienteSeleccionado.Direccion,
+                            Ciudad = _clienteSeleccionado.Ciudad,
+                            Provincia = _clienteSeleccionado.Provincia,
+                            CodigoPostal = _clienteSeleccionado.CodigoPostal,
+                            Pais = _clienteSeleccionado.Pais,
+                            Telefono = _clienteSeleccionado.Telefono,
+                            NumFax = _clienteSeleccionado.NumFax
+                        };
+                        MensajeEstado = $"Cliente '{_clienteSeleccionado.NombreCompania}' seleccionado para editar.";
+                        MensajeColor = Brushes.Black;
                     }
                     else
                     {
+                        // If deselected, clear the form.
+
                         ClienteActual = new Cliente();
                     }
                 }
@@ -65,9 +83,10 @@ namespace LPAC___Proyecto_II_frontend.ViewModel
                 {
                     _clienteActual = value;
                     OnPropertyChanged(nameof(ClienteActual));
-                    ((RelayCommand)GuardarClienteCommand).RaiseCanExecuteChanged();
-                    ((RelayCommand)EditarClienteCommand).RaiseCanExecuteChanged();
-                    ((RelayCommand)EliminarClienteCommand).RaiseCanExecuteChanged();
+
+                    // Trigger the CanExecute logic for all commands when ClienteActual changes
+                    UpdateCommandStates();
+
                 }
             }
         }
@@ -94,6 +113,8 @@ namespace LPAC___Proyecto_II_frontend.ViewModel
                 {
                     _mensajeEstado = value;
                     OnPropertyChanged(nameof(MensajeEstado));
+                    // Explicitly notify change of color to ensure UI updates
+                    OnPropertyChanged(nameof(MensajeColor));
                 }
             }
         }
@@ -111,144 +132,201 @@ namespace LPAC___Proyecto_II_frontend.ViewModel
             }
         }
 
+
         public ICommand BuscarClientesCommand { get; private set; }
         public ICommand NuevoClienteCommand { get; private set; }
         public ICommand GuardarClienteCommand { get; private set; }
-        public ICommand EditarClienteCommand { get; private set; }
         public ICommand EliminarClienteCommand { get; private set; }
         public ICommand LimpiarFormularioCommand { get; private set; }
 
+
         public ClienteViewModel()
         {
+            _clienteService = new ClienteService();
             ClientesEncontrados = new ObservableCollection<Cliente>();
-            ClienteActual = new Cliente();
-            MensajeColor = Brushes.Black;
 
-            BuscarClientesCommand = new RelayCommand(ExecuteBuscarClientes);
+
+            // Initialize commands first to avoid null checks in CanExecute
+            BuscarClientesCommand = new RelayCommand(async (p) => await ExecuteBuscarClientes(p));
+
             NuevoClienteCommand = new RelayCommand(ExecuteNuevoCliente);
-            GuardarClienteCommand = new RelayCommand(ExecuteGuardarCliente, CanExecuteGuardarCliente);
-            EditarClienteCommand = new RelayCommand(ExecuteEditarCliente, CanExecuteEditarCliente);
-            EliminarClienteCommand = new RelayCommand(ExecuteEliminarCliente, CanExecuteEliminarCliente);
+            GuardarClienteCommand = new RelayCommand(async (p) => await ExecuteGuardarCliente(p), CanExecuteGuardarCliente);
+            EliminarClienteCommand = new RelayCommand(async (p) => await ExecuteEliminarCliente(p), CanExecuteEliminarCliente);
             LimpiarFormularioCommand = new RelayCommand(ExecuteLimpiarFormulario);
+
+
+            // Initialize ClienteActual after commands
+            ClienteActual = new Cliente();
+            MensajeColor = Brushes.Green;
+
+            // Load clients on startup (fire-and-forget) if not in design mode
+            if (!DesignerProperties.GetIsInDesignMode(new DependencyObject()))
+            {
+                _ = LoadClientesAsync();
 
             if (!DesignerProperties.GetIsInDesignMode(new DependencyObject()))
             {
                 CargarClientesDePrueba();
+
             }
         }
 
-        private void CargarClientesDePrueba()
+        /// <summary>
+        /// Loads all clients on application startup.
+        /// </summary>
+        private async Task LoadClientesAsync()
         {
-            ClientesEncontrados.Add(new Cliente(1, "Empresa A", "Juan", "Pérez", "Gerente", "Calle 1", "San José", "San José", "10101", "CR", "2222-3333", "2222-4444"));
-            ClientesEncontrados.Add(new Cliente(2, "Compañía B", "María", "González", "Asistente", "Av. 2", "Heredia", "Heredia", "20202", "CR", "8888-7777", "8888-6666"));
-            ClientesEncontrados.Add(new Cliente(3, "Distribuidora C", "Pedro", "Rodríguez", "Vendedor", "Ruta 3", "Alajuela", "Alajuela", "30303", "CR", "9999-1111", "9999-2222"));
+            await ExecuteBuscarClientes(null);
+
         }
 
-        private void ExecuteBuscarClientes(object parameter)
+        /// <summary>
+        /// Method to update the state of the commands (enable/disable buttons).
+        /// </summary>
+        private void UpdateCommandStates()
+        {
+            ((RelayCommand)GuardarClienteCommand).RaiseCanExecuteChanged();
+            ((RelayCommand)EliminarClienteCommand).RaiseCanExecuteChanged();
+        }
+
+        // --- Command implementations (now with asynchronous calls) ---
+
+        private async Task ExecuteBuscarClientes(object parameter)
         {
             MensajeEstado = "Buscando clientes...";
             MensajeColor = Brushes.Blue;
-            ClientesEncontrados.Clear();
 
-            foreach (var cliente in GetTodosLosClientesDePrueba())
+
+            try
             {
-                if (string.IsNullOrWhiteSpace(TextoBusqueda) ||
-                    cliente.NombreCompania.Contains(TextoBusqueda, StringComparison.OrdinalIgnoreCase) ||
-                    cliente.NombreContacto.Contains(TextoBusqueda, StringComparison.OrdinalIgnoreCase) ||
-                    cliente.ApellidoContacto.Contains(TextoBusqueda, StringComparison.OrdinalIgnoreCase))
+                // Call the service to get data from the database.
+                var clientes = await _clienteService.GetClientesAsync(TextoBusqueda);
+
+                // Clear the collection and fill it with the service results.
+                ClientesEncontrados.Clear();
+                foreach (var cliente in clientes)
                 {
                     ClientesEncontrados.Add(cliente);
                 }
-            }
 
-            MensajeEstado = $"Búsqueda completada. {ClientesEncontrados.Count} clientes encontrados.";
-            MensajeColor = Brushes.Green;
-        }
 
-        private ObservableCollection<Cliente> GetTodosLosClientesDePrueba()
-        {
-            ObservableCollection<Cliente> todos = new ObservableCollection<Cliente>();
-            todos.Add(new Cliente(1, "Empresa A", "Juan", "Pérez", "Gerente", "Calle 1", "San José", "San José", "10101", "CR", "2222-3333", "2222-4444"));
-            todos.Add(new Cliente(2, "Compañía B", "María", "González", "Asistente", "Av. 2", "Heredia", "Heredia", "20202", "CR", "8888-7777", "8888-6666"));
-            todos.Add(new Cliente(3, "Distribuidora C", "Pedro", "Rodríguez", "Vendedor", "Ruta 3", "Alajuela", "Alajuela", "30303", "CR", "9999-1111", "9999-2222"));
-            todos.Add(new Cliente(4, "Soluciones S.A.", "Ana", "Díaz", "Directora", "Barrio Norte", "Cartago", "Cartago", "40404", "CR", "7777-5555", "7777-4444"));
-            return todos;
-        }
-
-        private void ExecuteNuevoCliente(object parameter)
-        {
-            ClienteActual = new Cliente();
-            ClienteSeleccionado = null;
-            MensajeEstado = "Listo para crear un nuevo cliente.";
-            MensajeColor = Brushes.Black;
-        }
-
-        private void ExecuteGuardarCliente(object parameter)
-        {
-            if (ClienteActual.ClienteId == 0)
-            {
-                MensajeEstado = "Guardando nuevo cliente...";
-                MensajeColor = Brushes.Blue;
-                ClienteActual.ClienteId = ClientesEncontrados.Count > 0 ? ClientesEncontrados.Max(c => c.ClienteId) + 1 : 1;
-                ClientesEncontrados.Add(ClienteActual);
-                MensajeEstado = $"Cliente '{ClienteActual.NombreCompania}' guardado con éxito.";
+                MensajeEstado = $"Búsqueda completada. {ClientesEncontrados.Count} clientes encontrados.";
                 MensajeColor = Brushes.Green;
             }
-            else
+            catch (Exception ex)
             {
-                MensajeEstado = "Actualizando cliente existente...";
-                MensajeColor = Brushes.Blue;
-                var clienteExistente = ClientesEncontrados.FirstOrDefault(c => c.ClienteId == ClienteActual.ClienteId);
-                if (clienteExistente != null)
-                {
-                    clienteExistente.NombreCompania = ClienteActual.NombreCompania;
-                    clienteExistente.NombreContacto = ClienteActual.NombreContacto;
-                    clienteExistente.ApellidoContacto = ClienteActual.ApellidoContacto;
-                    clienteExistente.PuestoContacto = ClienteActual.PuestoContacto;
-                    clienteExistente.Direccion = ClienteActual.Direccion;
-                    clienteExistente.Ciudad = ClienteActual.Ciudad;
-                    clienteExistente.Provincia = ClienteActual.Provincia;
-                    clienteExistente.CodigoPostal = ClienteActual.CodigoPostal;
-                    clienteExistente.Pais = ClienteActual.Pais;
-                    clienteExistente.Telefono = ClienteActual.Telefono;
-                    clienteExistente.NumFax = ClienteActual.NumFax;
-                }
-                MensajeEstado = $"Cliente '{ClienteActual.NombreCompania}' actualizado con éxito.";
-                MensajeColor = Brushes.Green;
-            }
-            ExecuteLimpiarFormulario(null);
-        }
-
-        private bool CanExecuteGuardarCliente(object parameter)
-        {
-            return ClienteActual != null && !string.IsNullOrWhiteSpace(ClienteActual.NombreCompania);
-        }
-
-        private void ExecuteEditarCliente(object parameter)
-        {
-            if (ClienteActual != null && ClienteActual.ClienteId != 0)
-            {
-                MensajeEstado = $"Editando cliente: {ClienteActual.NombreCompania}";
-                MensajeColor = Brushes.Black;
-            }
-            else
-            {
-                MensajeEstado = "Seleccione un cliente para editar.";
+                MensajeEstado = $"Error al buscar clientes: {ex.Message}";
                 MensajeColor = Brushes.Red;
             }
         }
 
-        private bool CanExecuteEditarCliente(object parameter)
+        private void ExecuteNuevoCliente(object parameter)
         {
-            return ClienteActual != null && ClienteActual.ClienteId != 0;
+
+            ExecuteLimpiarFormulario(null);
+            MensajeEstado = "Listo para crear un nuevo cliente.";
+            MensajeColor = Brushes.Black;
         }
 
-        private void ExecuteEliminarCliente(object parameter)
+        private async Task ExecuteGuardarCliente(object parameter)
         {
-            if (ClienteActual != null && ClienteActual.ClienteId != 0)
+
+            // Basic validation before saving
+            if (string.IsNullOrWhiteSpace(ClienteActual.NombreCompania))
             {
-                MensajeEstado = $"Eliminando cliente '{ClienteActual.NombreCompania}'...";
-                MensajeColor = Brushes.OrangeRed;
+                MensajeEstado = "Por favor, ingrese el nombre de la compañía.";
+                MensajeColor = Brushes.Red;
+                return;
+            }
+
+            try
+            {
+                if (ClienteActual.ClienteId == 0) // It's a new client
+                {
+                    MensajeEstado = "Guardando nuevo cliente...";
+                    MensajeColor = Brushes.Blue;
+
+                    // Call the service to create the client in the database.
+                    var nuevoCliente = await _clienteService.CreateClienteAsync(ClienteActual);
+
+                    // If the operation was successful, add the returned client (with the ID assigned by the backend) to the collection.
+                    ClientesEncontrados.Add(nuevoCliente);
+                    MensajeEstado = $"Cliente '{nuevoCliente.NombreCompania}' guardado con éxito.";
+                    MensajeColor = Brushes.Green;
+                }
+                else // It's an existing client
+                {
+                    MensajeEstado = "Actualizando cliente existente...";
+                    MensajeColor = Brushes.Blue;
+
+                    // Call the service to update the client.
+                    await _clienteService.UpdateClienteAsync(ClienteActual);
+
+                    // Find the client in the list and update its properties with the form data.
+                    var clienteExistente = ClientesEncontrados.FirstOrDefault(c => c.ClienteId == ClienteActual.ClienteId);
+                    if (clienteExistente != null)
+                    {
+                        // Copy the updated properties from the form (ClienteActual).
+                        clienteExistente.NombreCompania = ClienteActual.NombreCompania;
+                        clienteExistente.NombreContacto = ClienteActual.NombreContacto;
+                        clienteExistente.ApellidoContacto = ClienteActual.ApellidoContacto;
+                        clienteExistente.PuestoContacto = ClienteActual.PuestoContacto;
+                        clienteExistente.Direccion = ClienteActual.Direccion;
+                        clienteExistente.Ciudad = ClienteActual.Ciudad;
+                        clienteExistente.Provincia = ClienteActual.Provincia;
+                        clienteExistente.CodigoPostal = ClienteActual.CodigoPostal;
+                        clienteExistente.Pais = ClienteActual.Pais;
+                        clienteExistente.Telefono = ClienteActual.Telefono;
+                        clienteExistente.NumFax = ClienteActual.NumFax;
+                    }
+
+                    MensajeEstado = $"Cliente '{ClienteActual.NombreCompania}' actualizado con éxito.";
+                    MensajeColor = Brushes.Green;
+                }
+                // Recargar la lista después de guardar.
+                await ExecuteBuscarClientes(null);
+                // Clean the form after saving.
+                ExecuteLimpiarFormulario(null);
+
+            }
+            catch (Exception ex)
+            {
+                MensajeEstado = $"Error al guardar el cliente: {ex.Message}";
+                MensajeColor = Brushes.Red;
+            }
+
+        }
+
+        private bool CanExecuteGuardarCliente(object parameter)
+        {
+
+            return ClienteActual != null && !string.IsNullOrWhiteSpace(ClienteActual.NombreCompania);
+        }
+
+        private async Task ExecuteEliminarCliente(object parameter)
+        {
+
+            if (ClienteActual == null || ClienteActual.ClienteId == 0)
+
+            {
+                MensajeEstado = "Seleccione un cliente para eliminar.";
+                MensajeColor = Brushes.Red;
+                return;
+            }
+
+
+            MensajeEstado = $"Eliminando cliente '{ClienteActual.NombreCompania}'...";
+            MensajeColor = Brushes.OrangeRed;
+
+
+            try
+            {
+
+                // Call the service to delete the client.
+                await _clienteService.DeleteClienteAsync(ClienteActual.ClienteId);
+
+                // Remove the client from the local collection.
+
                 var clienteARemover = ClientesEncontrados.FirstOrDefault(c => c.ClienteId == ClienteActual.ClienteId);
                 if (clienteARemover != null)
                 {
@@ -256,29 +334,29 @@ namespace LPAC___Proyecto_II_frontend.ViewModel
                     MensajeEstado = $"Cliente '{ClienteActual.NombreCompania}' eliminado con éxito.";
                     MensajeColor = Brushes.Green;
                     ExecuteLimpiarFormulario(null);
-                }
-                else
-                {
-                    MensajeEstado = "No se encontró el cliente para eliminar en la lista actual.";
-                    MensajeColor = Brushes.Red;
+
                 }
             }
-            else
+            catch (Exception ex)
             {
-                MensajeEstado = "Seleccione un cliente para eliminar.";
+                MensajeEstado = $"Error al eliminar el cliente: {ex.Message}";
                 MensajeColor = Brushes.Red;
             }
         }
 
         private bool CanExecuteEliminarCliente(object parameter)
         {
+
             return ClienteActual != null && ClienteActual.ClienteId != 0;
         }
 
         private void ExecuteLimpiarFormulario(object parameter)
         {
+
+            // This method creates a new instance of Cliente to clear the form fields.
             ClienteActual = new Cliente();
-            ClienteSeleccionado = null;
+            ClienteSeleccionado = null; // Also clear the selection in the DataGrid
+
             MensajeEstado = "Formulario limpio y listo para un nuevo cliente o búsqueda.";
             MensajeColor = Brushes.Black;
         }

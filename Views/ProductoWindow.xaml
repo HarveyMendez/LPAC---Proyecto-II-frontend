@@ -1,32 +1,27 @@
-﻿<Window x:Class="LPAC___Proyecto_II_frontend.Views.ProductoWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:LPAC___Proyecto_II_frontend.Views"
-        xmlns:viewModel="clr-namespace:LPAC___Proyecto_II_frontend.ViewModel"
-        mc:Ignorable="d"
-        Title="Gestión de Productos" Height="700" Width="950"
-        WindowStartupLocation="CenterScreen"
-        Background="#1a1a1a" Foreground="White"
-        FontFamily="Segoe UI">
+﻿<UserControl x:Class="LPAC___Proyecto_II_frontend.Views.ProductoWindow"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:LPAC___Proyecto_II_frontend.Views"
+             xmlns:viewModel="clr-namespace:LPAC___Proyecto_II_frontend.ViewModel"
+             mc:Ignorable="d"
+             d:DesignHeight="700" d:DesignWidth="950">
 
-    <Window.DataContext>
+    <UserControl.DataContext>
         <viewModel:ProductoViewModel/>
-    </Window.DataContext>
+    </UserControl.DataContext>
 
-    <Window.Resources>
+    <UserControl.Resources>
         <Style TargetType="TextBlock">
             <Setter Property="Foreground" Value="#e0e0e0"/>
             <Setter Property="FontSize" Value="14"/>
         </Style>
-
         <Style TargetType="Label">
             <Setter Property="Foreground" Value="#b0b0b0"/>
             <Setter Property="FontSize" Value="14"/>
             <Setter Property="Padding" Value="0,0,0,3"/>
         </Style>
-
         <Style TargetType="TextBox">
             <Setter Property="Padding" Value="8"/>
             <Setter Property="Background" Value="#2a2a2a"/>
@@ -90,9 +85,9 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border Background="{TemplateBinding Background}" 
+                        <Border Background="{TemplateBinding Background}"
                                 BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}" 
+                                BorderThickness="{TemplateBinding BorderThickness}"
                                 CornerRadius="4">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
@@ -186,7 +181,7 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
-    </Window.Resources>
+    </UserControl.Resources>
 
     <Grid Margin="12">
         <Grid.RowDefinitions>
@@ -201,8 +196,8 @@
                 BorderBrush="{Binding MensajeColor}" BorderThickness="1">
             <TextBlock Text="{Binding MensajeEstado}"
                        Foreground="{Binding MensajeColor}"
-                       HorizontalAlignment="Center" 
-                       FontWeight="SemiBold" 
+                       HorizontalAlignment="Center"
+                       FontWeight="SemiBold"
                        FontSize="15"/>
         </Border>
 
@@ -217,8 +212,8 @@
 
         <Border Grid.Row="2" BorderBrush="#404040" BorderThickness="1" CornerRadius="4" Margin="0,0,0,12">
             <DataGrid ItemsSource="{Binding ProductosEncontrados}"
-                      SelectedItem="{Binding ProductoActual, Mode=TwoWay}" 
-                      AutoGenerateColumns="False" 
+                      SelectedItem="{Binding ProductoActual, Mode=TwoWay}"
+                      AutoGenerateColumns="False"
                       IsReadOnly="True"
                       SelectionMode="Single">
                 <DataGrid.Columns>
@@ -268,9 +263,7 @@
                           ItemsSource="{Binding Categorias}"
                           DisplayMemberPath="descripcion"
                           SelectedValuePath="codCategoria"
-                          SelectedValue="{Binding ProductoActual.codCategoria, Mode=TwoWay}"
-                          SelectedItem="{Binding SelectedCategoria, Mode=TwoWay}"
-                          />
+                          SelectedItem="{Binding SelectedCategoria, Mode=TwoWay}"/>
                 <Label Content="Punto Reorden:" Grid.Row="1" Grid.Column="3" VerticalAlignment="Center" Margin="0,8,0,0"/>
                 <TextBox Grid.Row="1" Grid.Column="4" Text="{Binding ProductoActual.puntoReorden, UpdateSourceTrigger=PropertyChanged}" Margin="0,8,0,0"/>
 
@@ -282,10 +275,11 @@
             </Grid>
         </Border>
 
-        <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,16,0,0">
-            <Button Content="Guardar" Command="{Binding GuardarProductoCommand}" Style="{StaticResource AccentButtonStyle}"/>
-            <Button Content="Eliminar" Command="{Binding EliminarProductoCommand}" Style="{StaticResource DestructiveButtonStyle}"/>
-            <Button Content="Limpiar" Command="{Binding LimpiarFormularioCommand}" Style="{StaticResource DarkButtonStyle}"/>
+        <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,12,0,0">
+            <Button Content="Nuevo/Limpiar" Command="{Binding NuevoProductoCommand}" Style="{StaticResource DarkButtonStyle}"/>
+            <Button Content="Guardar" Command="{Binding GuardarProductoCommand}" Style="{StaticResource AccentButtonStyle}" Margin="8,0,0,0"/>
+            <Button Content="Eliminar" Command="{Binding EliminarProductoCommand}" Style="{StaticResource DestructiveButtonStyle}" Margin="8,0,0,0"/>
         </StackPanel>
+
     </Grid>
-</Window>
+</UserControl>
