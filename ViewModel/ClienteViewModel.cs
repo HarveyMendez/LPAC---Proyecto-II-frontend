@@ -2,7 +2,6 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
-
 using System.Threading.Tasks; // Required for Task and async/await
 using System.Windows.Input;
 using System.Windows.Media;
@@ -11,11 +10,11 @@ using LPAC___Proyecto_II_frontend.Models;
 using LPAC___Proyecto_II_frontend.Helpers;
 using LPAC___Proyecto_II_frontend.Commands;
 using LPAC___Proyecto_II_frontend.Services;
+
 namespace LPAC___Proyecto_II_frontend.ViewModel
 {
     public class ClienteViewModel : ViewModelBase
     {
-
         // Collection to display clients in the DataGrid
         public ObservableCollection<Cliente> ClientesEncontrados { get; set; }
 
@@ -28,7 +27,6 @@ namespace LPAC___Proyecto_II_frontend.ViewModel
         // Instance of the service to interact with the backend
         private readonly ClienteService _clienteService;
 
-
         // Public properties with change notification
         public Cliente ClienteSeleccionado
         {
@@ -39,7 +37,6 @@ namespace LPAC___Proyecto_II_frontend.ViewModel
                 {
                     _clienteSeleccionado = value;
                     OnPropertyChanged(nameof(ClienteSeleccionado));
-
 
                     // Logic to load the selected client into the form for editing.
                     // This is done by assigning a clone to ClienteActual.
@@ -67,7 +64,6 @@ namespace LPAC___Proyecto_II_frontend.ViewModel
                     else
                     {
                         // If deselected, clear the form.
-
                         ClienteActual = new Cliente();
                     }
                 }
@@ -83,10 +79,8 @@ namespace LPAC___Proyecto_II_frontend.ViewModel
                 {
                     _clienteActual = value;
                     OnPropertyChanged(nameof(ClienteActual));
-
                     // Trigger the CanExecute logic for all commands when ClienteActual changes
                     UpdateCommandStates();
-
                 }
             }
         }
@@ -132,28 +126,25 @@ namespace LPAC___Proyecto_II_frontend.ViewModel
             }
         }
 
-
+        // Commands
         public ICommand BuscarClientesCommand { get; private set; }
         public ICommand NuevoClienteCommand { get; private set; }
         public ICommand GuardarClienteCommand { get; private set; }
         public ICommand EliminarClienteCommand { get; private set; }
         public ICommand LimpiarFormularioCommand { get; private set; }
 
-
+        // Constructor
         public ClienteViewModel()
         {
             _clienteService = new ClienteService();
             ClientesEncontrados = new ObservableCollection<Cliente>();
 
-
             // Initialize commands first to avoid null checks in CanExecute
             BuscarClientesCommand = new RelayCommand(async (p) => await ExecuteBuscarClientes(p));
-
             NuevoClienteCommand = new RelayCommand(ExecuteNuevoCliente);
             GuardarClienteCommand = new RelayCommand(async (p) => await ExecuteGuardarCliente(p), CanExecuteGuardarCliente);
             EliminarClienteCommand = new RelayCommand(async (p) => await ExecuteEliminarCliente(p), CanExecuteEliminarCliente);
             LimpiarFormularioCommand = new RelayCommand(ExecuteLimpiarFormulario);
-
 
             // Initialize ClienteActual after commands
             ClienteActual = new Cliente();
@@ -163,11 +154,6 @@ namespace LPAC___Proyecto_II_frontend.ViewModel
             if (!DesignerProperties.GetIsInDesignMode(new DependencyObject()))
             {
                 _ = LoadClientesAsync();
-
-            if (!DesignerProperties.GetIsInDesignMode(new DependencyObject()))
-            {
-                CargarClientesDePrueba();
-
             }
         }
 
@@ -177,7 +163,6 @@ namespace LPAC___Proyecto_II_frontend.ViewModel
         private async Task LoadClientesAsync()
         {
             await ExecuteBuscarClientes(null);
-
         }
 
         /// <summary>
@@ -196,7 +181,6 @@ namespace LPAC___Proyecto_II_frontend.ViewModel
             MensajeEstado = "Buscando clientes...";
             MensajeColor = Brushes.Blue;
 
-
             try
             {
                 // Call the service to get data from the database.
@@ -208,7 +192,6 @@ namespace LPAC___Proyecto_II_frontend.ViewModel
                 {
                     ClientesEncontrados.Add(cliente);
                 }
-
 
                 MensajeEstado = $"Búsqueda completada. {ClientesEncontrados.Count} clientes encontrados.";
                 MensajeColor = Brushes.Green;
@@ -222,7 +205,6 @@ namespace LPAC___Proyecto_II_frontend.ViewModel
 
         private void ExecuteNuevoCliente(object parameter)
         {
-
             ExecuteLimpiarFormulario(null);
             MensajeEstado = "Listo para crear un nuevo cliente.";
             MensajeColor = Brushes.Black;
@@ -230,7 +212,6 @@ namespace LPAC___Proyecto_II_frontend.ViewModel
 
         private async Task ExecuteGuardarCliente(object parameter)
         {
-
             // Basic validation before saving
             if (string.IsNullOrWhiteSpace(ClienteActual.NombreCompania))
             {
@@ -294,39 +275,32 @@ namespace LPAC___Proyecto_II_frontend.ViewModel
                 MensajeEstado = $"Error al guardar el cliente: {ex.Message}";
                 MensajeColor = Brushes.Red;
             }
-
         }
 
         private bool CanExecuteGuardarCliente(object parameter)
         {
-
+            // The Save button is enabled if ClienteActual is not null and has a company name.
             return ClienteActual != null && !string.IsNullOrWhiteSpace(ClienteActual.NombreCompania);
         }
 
         private async Task ExecuteEliminarCliente(object parameter)
         {
-
             if (ClienteActual == null || ClienteActual.ClienteId == 0)
-
             {
                 MensajeEstado = "Seleccione un cliente para eliminar.";
                 MensajeColor = Brushes.Red;
                 return;
             }
 
-
             MensajeEstado = $"Eliminando cliente '{ClienteActual.NombreCompania}'...";
             MensajeColor = Brushes.OrangeRed;
 
-
             try
             {
-
                 // Call the service to delete the client.
                 await _clienteService.DeleteClienteAsync(ClienteActual.ClienteId);
 
                 // Remove the client from the local collection.
-
                 var clienteARemover = ClientesEncontrados.FirstOrDefault(c => c.ClienteId == ClienteActual.ClienteId);
                 if (clienteARemover != null)
                 {
@@ -334,7 +308,6 @@ namespace LPAC___Proyecto_II_frontend.ViewModel
                     MensajeEstado = $"Cliente '{ClienteActual.NombreCompania}' eliminado con éxito.";
                     MensajeColor = Brushes.Green;
                     ExecuteLimpiarFormulario(null);
-
                 }
             }
             catch (Exception ex)
@@ -346,17 +319,15 @@ namespace LPAC___Proyecto_II_frontend.ViewModel
 
         private bool CanExecuteEliminarCliente(object parameter)
         {
-
+            // The Delete button is enabled only if there is a selected client with a valid ID (not a new client).
             return ClienteActual != null && ClienteActual.ClienteId != 0;
         }
 
         private void ExecuteLimpiarFormulario(object parameter)
         {
-
             // This method creates a new instance of Cliente to clear the form fields.
             ClienteActual = new Cliente();
             ClienteSeleccionado = null; // Also clear the selection in the DataGrid
-
             MensajeEstado = "Formulario limpio y listo para un nuevo cliente o búsqueda.";
             MensajeColor = Brushes.Black;
         }
