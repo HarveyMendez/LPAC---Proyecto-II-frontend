@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Controls;
-using LPAC___Proyecto_II_frontend.Views; // Asegúrate de que este namespace contenga tus UserControls
+using LPAC___Proyecto_II_frontend.Views; 
 
 namespace LPAC___Proyecto_II_frontend
 {
@@ -61,6 +61,23 @@ namespace LPAC___Proyecto_II_frontend
                 // Crea una nueva instancia de la vista de Productos y la asigna al ContentControl.
                 // Esta clase (ProductoWindow) debe ser un UserControl, no una Window.
                 MainContentArea.Content = new ProductoWindow();
+            }
+            catch (Exception ex)
+            {
+                // Maneja cualquier error que pueda ocurrir al crear la vista.
+                MessageBox.Show($"Error al cargar la vista de Productos: {ex.Message}", "Error de Carga", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+        /// <summary>
+        /// Manejador de eventos para el botón "Productos".
+        /// </summary>
+        private void Ordenes_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                // Crea una nueva instancia de la vista de Productos y la asigna al ContentControl.
+                // Esta clase (ProductoWindow) debe ser un UserControl, no una Window.
+                MainContentArea.Content = new OrdenWindow();
             }
             catch (Exception ex)
             {
