@@ -47,6 +47,17 @@
                         BorderBrush="#DDDDDD"
                         BorderThickness="1"
                         Click="Productos_Click"/>
+                
+                <Button Content="Ordenes"
+                        FontSize="16" FontWeight="SemiBold"
+                        Margin="0,5,0,0"
+                        Padding="10"
+                        HorizontalContentAlignment="Left"
+                        Background="#FFFFFF"
+                        BorderBrush="#DDDDDD"
+                        BorderThickness="1"
+                        Click="Ordenes_Click"/>    
+
             </StackPanel>
         </Border>
 
