@@ -10,9 +10,7 @@
         WindowStartupLocation="CenterScreen"
         ResizeMode="NoResize">
 
-    <Window.DataContext>
-        <viewModel:LoginViewModel/>
-    </Window.DataContext>
+
 
     <Grid>
         <Grid.RowDefinitions>

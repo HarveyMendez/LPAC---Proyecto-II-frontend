@@ -3,6 +3,11 @@ using System.ComponentModel;
 using System.Windows.Input; 
 using LPAC___Proyecto_II_frontend.Helpers;
 using LPAC___Proyecto_II_frontend.Commands;
+using LPAC___Proyecto_II_frontend.Services;
+using System.Windows;
+using System.Threading.Tasks;
+using System.Windows.Input;
+using LPAC___Proyecto_II_frontend.Views;
 
 namespace LPAC___Proyecto_II_frontend.ViewModel 
 {
@@ -58,17 +63,34 @@ namespace LPAC___Proyecto_II_frontend.ViewModel
             LoginCommand = new RelayCommand(ExecuteLogin, CanExecuteLogin);
         }
 
-        private void ExecuteLogin(object parameter)
+        private async void ExecuteLogin(object parameter)
         {
-            if (Usuario == "admin" && Contrasena == "123")
+            try
             {
-                MensajeError = "¡Inicio de sesión exitoso! Pura vida.";
+                bool success = await AuthService.LoginAsync(Usuario, Contrasena);
+
+                if (success)
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        var mainWindow = new MainWindow();
+                        mainWindow.Show();
+                    });
+                    Application.Current.Windows.OfType<LoginWindow>().FirstOrDefault()?.Close();
+
+                }
+                else
+                {
+                    MensajeError = "Usuario o contraseña incorrectos";
+                }
             }
-            else
+            catch (Exception ex)
             {
-                MensajeError = "Usuario o contraseña incorrectos. ¡Intente de nuevo, mae!";
+                MensajeError = $"Error: {ex.Message}";
             }
         }
+        
+
 
         private bool CanExecuteLogin(object parameter)
         {
