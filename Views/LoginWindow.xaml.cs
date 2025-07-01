@@ -9,16 +9,15 @@ namespace LPAC___Proyecto_II_frontend.Views
         public LoginWindow()
         {
             InitializeComponent();
+            DataContext = new LoginViewModel();
+
             // Esto es para pasar la contraseña al ViewModel, ya que PasswordBox no tiene Binding directo.
             // Una opción más limpia es usar Attached Properties o un Behavior, pero esta es sencilla para empezar.
-            this.DataContextChanged += (s, e) =>
+            PasswordBox.PasswordChanged += (sender, e) =>
             {
-                if (DataContext is LoginViewModel viewModel)
+                if (DataContext is LoginViewModel vm)
                 {
-                    PasswordBox.PasswordChanged += (sender, args) =>
-                    {
-                        viewModel.Contrasena = PasswordBox.Password;
-                    };
+                    vm.Contrasena = PasswordBox.Password;
                 }
             };
         }

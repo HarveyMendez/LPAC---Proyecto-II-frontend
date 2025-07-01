@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Controls;
+using LPAC___Proyecto_II_frontend.ViewModel;
 using LPAC___Proyecto_II_frontend.Views; 
 
 namespace LPAC___Proyecto_II_frontend
@@ -10,9 +11,11 @@ namespace LPAC___Proyecto_II_frontend
     /// </summary>
     public partial class MainWindow : Window
     {
+
         public MainWindow()
         {
             InitializeComponent();
+            DataContext = new MainWindowViewModel();
         }
 
         /// <summary>
