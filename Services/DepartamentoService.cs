@@ -6,7 +6,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Net.Http.Json;
-using LPAC___Proyecto_II_frontend.DTOs; 
+using LPAC___Proyecto_II_frontend.DTOs; // Importante: para DepartamentoDTO
 
 namespace LPAC___Proyecto_II_frontend.Services
 {
@@ -18,38 +18,35 @@ namespace LPAC___Proyecto_II_frontend.Services
         public DepartamentoService()
         {
             _httpClient = new HttpClient();
-    
-            string baseUrlFromConfig = AppConfig.GetApiBaseUrl();
+            string baseUrlFromConfig = AppConfig.GetApiBaseUrl(); // Asumo que AppConfig.GetApiBaseUrl() existe
             _apiEndpoint = $"{baseUrlFromConfig}/api/Departamento";
             _httpClient.BaseAddress = new Uri(baseUrlFromConfig);
         }
 
-        public async Task<List<Departamento>> GetAllDepartamentosAsync(string searchTerm = null)
+        // CAMBIO CRUCIAL: Ahora devuelve List<DepartamentoDTO>
+        public async Task<List<DepartamentoDTO>> GetAllDepartamentosAsync(string searchTerm = null)
         {
             try
             {
                 string requestUrl = _apiEndpoint;
                 if (!string.IsNullOrWhiteSpace(searchTerm))
                 {
-                    
-                    requestUrl += $"?nombreDepartamento={Uri.EscapeDataString(searchTerm)}";
+                    // Si el backend tuviera un parámetro searchTerm para nombreDepartamento
+                    // requestUrl += $"?nombreDepartamento={Uri.EscapeDataString(searchTerm)}";
                 }
 
                 var response = await _httpClient.GetAsync(requestUrl);
                 response.EnsureSuccessStatusCode();
 
-         
+                // Directamente lee como List<DepartamentoDTO>
                 var departamentosDto = await response.Content.ReadFromJsonAsync<List<DepartamentoDTO>>();
 
-            
-             
-                var departamentos = departamentosDto?.Select(dto => new Departamento().FromDto(dto)).ToList();
-                return departamentos ?? new List<Departamento>();
+                // No hay necesidad de mapear a Models.Departamento aquí; el ViewModel lo manejará.
+                return departamentosDto ?? new List<DepartamentoDTO>();
             }
             catch (HttpRequestException ex)
             {
                 Console.WriteLine($"Error al obtener departamentos: {ex.Message}");
-                
                 throw;
             }
             catch (Exception ex)
@@ -59,17 +56,17 @@ namespace LPAC___Proyecto_II_frontend.Services
             }
         }
 
-        public async Task<Departamento> CreateDepartamentoAsync(Departamento departamento)
+        // CAMBIO CRUCIAL: Ahora acepta DepartamentoDTO y devuelve DepartamentoDTO
+        public async Task<DepartamentoDTO> CreateDepartamentoAsync(DepartamentoDTO departamentoDto)
         {
             try
             {
-         
-                var departamentoDto = departamento.ToDto();
+                // Ya recibimos un DTO, no necesitamos llamar a ToDto()
                 var response = await _httpClient.PostAsJsonAsync(_apiEndpoint, departamentoDto);
                 response.EnsureSuccessStatusCode();
 
                 var createdDepartamentoDto = await response.Content.ReadFromJsonAsync<DepartamentoDTO>();
-                return new Departamento().FromDto(createdDepartamentoDto);
+                return createdDepartamentoDto; // Devuelve el DTO creado
             }
             catch (HttpRequestException ex)
             {
@@ -83,13 +80,14 @@ namespace LPAC___Proyecto_II_frontend.Services
             }
         }
 
-        public async Task UpdateDepartamentoAsync(Departamento departamento)
+        // CAMBIO CRUCIAL: Ahora acepta DepartamentoDTO
+        public async Task UpdateDepartamentoAsync(DepartamentoDTO departamentoDto)
         {
             try
             {
-                var departamentoDto = departamento.ToDto();
-              
-                var response = await _httpClient.PutAsJsonAsync($"{_apiEndpoint}/{departamento.DeptoCod}", departamentoDto);
+                // Ya recibimos un DTO, no necesitamos llamar a ToDto()
+                // Usamos departamentoDto.codDepartamento para la URL, que es el ID
+                var response = await _httpClient.PutAsJsonAsync($"{_apiEndpoint}/{departamentoDto.codDepartamento}", departamentoDto);
                 response.EnsureSuccessStatusCode();
             }
             catch (HttpRequestException ex)
@@ -108,7 +106,6 @@ namespace LPAC___Proyecto_II_frontend.Services
         {
             try
             {
-              
                 var response = await _httpClient.DeleteAsync($"{_apiEndpoint}/{deptoCod}");
                 response.EnsureSuccessStatusCode();
             }

@@ -1,5 +1,5 @@
 ﻿using LPAC___Proyecto_II_frontend.Helpers;
-using LPAC___Proyecto_II_frontend.DTOs; 
+using LPAC___Proyecto_II_frontend.DTOs; // Usamos el DTO para el mapeo
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,57 +10,58 @@ namespace LPAC___Proyecto_II_frontend.Models
 {
     public class Departamento : ViewModelBase
     {
-        private int deptoCod;
-        private string nombreDepartament;
+        private string _codDepartamento = string.Empty; // Cambiado a string y inicializado
+        private string _nombreDepartamento = string.Empty; // Corregido el nombre y inicializado
 
         public Departamento() { }
 
-        public Departamento(int deptoCod, string nombreDepartament)
+        public Departamento(string codDepartamento, string nombreDepartamento) // Cambiado el tipo del código
         {
-            this.DeptoCod = deptoCod;
-            this.NombreDepartament = nombreDepartament;
+            _codDepartamento = codDepartamento;
+            _nombreDepartamento = nombreDepartamento;
         }
 
-        public int DeptoCod
+        public string CodDepartamento // Cambiado el tipo de la propiedad
         {
-            get => deptoCod;
+            get => _codDepartamento;
             set
             {
-                if (deptoCod != value)
+                if (_codDepartamento != value)
                 {
-                    deptoCod = value;
-                    OnPropertyChanged(nameof(DeptoCod));
+                    _codDepartamento = value;
+                    OnPropertyChanged(nameof(CodDepartamento));
                 }
             }
         }
 
-        public string NombreDepartament
+        public string NombreDepartamento // Corregido el nombre de la propiedad
         {
-            get => nombreDepartament;
+            get => _nombreDepartamento;
             set
             {
-                if (nombreDepartament != value)
+                if (_nombreDepartamento != value)
                 {
-                    nombreDepartament = value;
-                    OnPropertyChanged(nameof(NombreDepartament));
+                    _nombreDepartamento = value;
+                    OnPropertyChanged(nameof(NombreDepartamento));
                 }
             }
         }
 
+        // Método para convertir este modelo a su DTO correspondiente
         public DepartamentoDTO ToDto()
         {
             return new DepartamentoDTO
             {
-                deptoCod = this.DeptoCod,
-                nombreDepartament = this.NombreDepartament
+                codDepartamento = this.CodDepartamento,
+                nombreDepartamento = this.NombreDepartamento
             };
         }
 
-
+        // Método para popular este modelo desde un DTO
         public Departamento FromDto(DepartamentoDTO dto)
         {
-            this.DeptoCod = dto.deptoCod;
-            this.NombreDepartament = dto.nombreDepartament;
+            this.CodDepartamento = dto.codDepartamento ?? string.Empty; // Manejar posible null del DTO
+            this.NombreDepartamento = dto.nombreDepartamento ?? string.Empty; // Manejar posible null del DTO
             return this;
         }
     }

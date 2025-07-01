@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace LPAC___Proyecto_II_frontend.DTOs
 {
-    public class DepartamentoDTO
+    public class RolDTO
     {
-        public string codDepartamento { get; set; } = string.Empty;
-        public string nombreDepartamento { get; set; } = string.Empty;
+        public int idRol { get; set; }
+
+        public string nombreRol { get; set; } = string.Empty;
     }
 }
