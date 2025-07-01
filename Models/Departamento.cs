@@ -1,5 +1,6 @@
-﻿using LPAC___Proyecto_II_frontend.Helpers;
-using LPAC___Proyecto_II_frontend.DTOs; 
+﻿// Models/Departamento.cs
+using LPAC___Proyecto_II_frontend.Helpers;
+using LPAC___Proyecto_II_frontend.DTOs; // <--- ¡MUY IMPORTANTE ESTE USING!
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,57 +11,58 @@ namespace LPAC___Proyecto_II_frontend.Models
 {
     public class Departamento : ViewModelBase
     {
-        private int deptoCod;
-        private string nombreDepartament;
+        private string _codDepartamento = string.Empty;
+        private string _nombreDepartamento = string.Empty;
 
         public Departamento() { }
 
-        public Departamento(int deptoCod, string nombreDepartament)
+        public Departamento(string codDepartamento, string nombreDepartamento)
         {
-            this.DeptoCod = deptoCod;
-            this.NombreDepartament = nombreDepartament;
+            _codDepartamento = codDepartamento;
+            _nombreDepartamento = nombreDepartamento;
         }
 
-        public int DeptoCod
+        public string CodDepartamento
         {
-            get => deptoCod;
+            get => _codDepartamento;
             set
             {
-                if (deptoCod != value)
+                if (_codDepartamento != value)
                 {
-                    deptoCod = value;
-                    OnPropertyChanged(nameof(DeptoCod));
+                    _codDepartamento = value;
+                    OnPropertyChanged(nameof(CodDepartamento));
                 }
             }
         }
 
-        public string NombreDepartament
+        public string NombreDepartamento
         {
-            get => nombreDepartament;
+            get => _nombreDepartamento;
             set
             {
-                if (nombreDepartament != value)
+                if (_nombreDepartamento != value)
                 {
-                    nombreDepartament = value;
-                    OnPropertyChanged(nameof(NombreDepartament));
+                    _nombreDepartamento = value;
+                    OnPropertyChanged(nameof(NombreDepartamento));
                 }
             }
         }
 
+        // ***** ESTE MÉTODO ToDto() DEBE ESTAR AQUÍ *****
         public DepartamentoDTO ToDto()
         {
             return new DepartamentoDTO
             {
-                deptoCod = this.DeptoCod,
-                nombreDepartament = this.NombreDepartament
+                codDepartamento = this.CodDepartamento,
+                nombreDepartamento = this.NombreDepartamento
             };
         }
 
-
+        // Este método FromDto() también es importante para convertir de DTO a Modelo
         public Departamento FromDto(DepartamentoDTO dto)
         {
-            this.DeptoCod = dto.deptoCod;
-            this.NombreDepartament = dto.nombreDepartament;
+            this.CodDepartamento = dto.codDepartamento ?? string.Empty;
+            this.NombreDepartamento = dto.nombreDepartamento ?? string.Empty;
             return this;
         }
     }

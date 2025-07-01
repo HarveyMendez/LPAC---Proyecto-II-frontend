@@ -1,4 +1,5 @@
-﻿using LPAC___Proyecto_II_frontend.Models;
+﻿// DepartamentoService.cs
+using LPAC___Proyecto_II_frontend.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,7 +7,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Net.Http.Json;
-using LPAC___Proyecto_II_frontend.DTOs; 
+using LPAC___Proyecto_II_frontend.DTOs;
 
 namespace LPAC___Proyecto_II_frontend.Services
 {
@@ -18,7 +19,6 @@ namespace LPAC___Proyecto_II_frontend.Services
         public DepartamentoService()
         {
             _httpClient = new HttpClient();
-    
             string baseUrlFromConfig = AppConfig.GetApiBaseUrl();
             _apiEndpoint = $"{baseUrlFromConfig}/api/Departamento";
             _httpClient.BaseAddress = new Uri(baseUrlFromConfig);
@@ -31,25 +31,23 @@ namespace LPAC___Proyecto_II_frontend.Services
                 string requestUrl = _apiEndpoint;
                 if (!string.IsNullOrWhiteSpace(searchTerm))
                 {
-                    
-                    requestUrl += $"?nombreDepartamento={Uri.EscapeDataString(searchTerm)}";
+                    // Aquí tu backend controller "VerDepartamentos" no tiene un parámetro searchTerm
+                    // Si el backend lo tuviera, sería:
+                    // requestUrl += $"?nombreDepartamento={Uri.EscapeDataString(searchTerm)}";
                 }
 
                 var response = await _httpClient.GetAsync(requestUrl);
                 response.EnsureSuccessStatusCode();
 
-         
                 var departamentosDto = await response.Content.ReadFromJsonAsync<List<DepartamentoDTO>>();
 
-            
-             
+                // Convierte DTOs a Modelos antes de devolverlos
                 var departamentos = departamentosDto?.Select(dto => new Departamento().FromDto(dto)).ToList();
                 return departamentos ?? new List<Departamento>();
             }
             catch (HttpRequestException ex)
             {
                 Console.WriteLine($"Error al obtener departamentos: {ex.Message}");
-                
                 throw;
             }
             catch (Exception ex)
@@ -63,7 +61,6 @@ namespace LPAC___Proyecto_II_frontend.Services
         {
             try
             {
-         
                 var departamentoDto = departamento.ToDto();
                 var response = await _httpClient.PostAsJsonAsync(_apiEndpoint, departamentoDto);
                 response.EnsureSuccessStatusCode();
@@ -88,8 +85,8 @@ namespace LPAC___Proyecto_II_frontend.Services
             try
             {
                 var departamentoDto = departamento.ToDto();
-              
-                var response = await _httpClient.PutAsJsonAsync($"{_apiEndpoint}/{departamento.DeptoCod}", departamentoDto);
+                // FIX: Usar 'departamento.CodDepartamento' (mayúscula de tu Model)
+                var response = await _httpClient.PutAsJsonAsync($"{_apiEndpoint}/{departamento.CodDepartamento}", departamentoDto);
                 response.EnsureSuccessStatusCode();
             }
             catch (HttpRequestException ex)
@@ -108,7 +105,6 @@ namespace LPAC___Proyecto_II_frontend.Services
         {
             try
             {
-              
                 var response = await _httpClient.DeleteAsync($"{_apiEndpoint}/{deptoCod}");
                 response.EnsureSuccessStatusCode();
             }

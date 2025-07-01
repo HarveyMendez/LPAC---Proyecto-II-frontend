@@ -3,14 +3,193 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:local="clr-namespace:LPAC___Proyecto_II_frontend.Views"
              xmlns:viewModel="clr-namespace:LPAC___Proyecto_II_frontend.ViewModel"
+             xmlns:converters="clr-namespace:LPAC___Proyecto_II_frontend.Helpers"
+             xmlns:helpers="clr-namespace:LPAC___Proyecto_II_frontend.Helpers"
              mc:Ignorable="d"
-             d:DesignHeight="650" d:DesignWidth="900">
+             d:DesignHeight="680" d:DesignWidth="950">
+
+    <UserControl.DataContext>
+        <viewModel:EmpleadoViewModel/>
+    </UserControl.DataContext>
+
+    <UserControl.Resources>
+        <converters:InverseBooleanConverter x:Key="InverseBooleanConverter" />
+
+        <Style TargetType="TextBlock">
+            <Setter Property="Foreground" Value="#333333"/>
+            <Setter Property="FontSize" Value="14"/>
+        </Style>
+        <Style TargetType="Label">
+            <Setter Property="Foreground" Value="#333333"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Padding" Value="0,0,0,3"/>
+        </Style>
+
+        <Style TargetType="TextBox">
+            <Setter Property="Padding" Value="8"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Foreground" Value="#2a2a2a"/>
+            <Setter Property="BorderBrush" Value="#cccccc"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CaretBrush" Value="Black"/>
+            <Setter Property="MinHeight" Value="32"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+
+        <Style TargetType="PasswordBox">
+            <Setter Property="Padding" Value="8"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Foreground" Value="#2a2a2a"/>
+            <Setter Property="BorderBrush" Value="#cccccc"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CaretBrush" Value="Black"/>
+            <Setter Property="MinHeight" Value="32"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+
+        <Style TargetType="ComboBox">
+            <Setter Property="Padding" Value="8"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Foreground" Value="#2a2a2a"/>
+            <Setter Property="BorderBrush" Value="#cccccc"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="MinHeight" Value="32"/>
+        </Style>
+
+        <Style TargetType="ComboBoxItem">
+            <Setter Property="Foreground" Value="#2a2a2a"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Padding" Value="8"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#E0E0E0"/>
+                    <Setter Property="Foreground" Value="Black"/>
+                </Trigger>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="#D0D0D0"/>
+                    <Setter Property="Foreground" Value="Black"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style TargetType="CheckBox">
+            <Setter Property="Foreground" Value="#333333"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="5"/>
+        </Style>
+
+        <Style x:Key="BaseButtonStyle" TargetType="Button">
+            <Setter Property="Foreground" Value="Black"/>
+            <Setter Property="Background" Value="#E0E0E0"/>
+            <Setter Property="BorderBrush" Value="#CCCCCC"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="12,6"/>
+            <Setter Property="Margin" Value="8,0,0,0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="4">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#D0D0D0"/>
+                </Trigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Background" Value="#C0C0C0"/>
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Opacity" Value="0.5"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="AccentButtonStyle" TargetType="Button" BasedOn="{StaticResource BaseButtonStyle}">
+            <Setter Property="Background" Value="#007ACC"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="#007ACC"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#006BBF"/>
+                </Trigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Background" Value="#005A99"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="DestructiveButtonStyle" TargetType="Button" BasedOn="{StaticResource BaseButtonStyle}">
+            <Setter Property="Background" Value="#D13438"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="#D13438"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#B2242F"/>
+                </Trigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Background" Value="#9F1C29"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style TargetType="DataGrid">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Foreground" Value="#333333"/>
+            <Setter Property="BorderBrush" Value="#cccccc"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="HeadersVisibility" Value="Column"/>
+            <Setter Property="GridLinesVisibility" Value="All"/>
+            <Setter Property="HorizontalGridLinesBrush" Value="#e0e0e0"/>
+            <Setter Property="VerticalGridLinesBrush" Value="#e0e0e0"/>
+            <Setter Property="RowBackground" Value="White"/>
+            <Setter Property="AlternatingRowBackground" Value="#f9f9f9"/>
+            <Setter Property="RowHeight" Value="32"/>
+            <Setter Property="FontSize" Value="14"/>
+        </Style>
+
+        <Style TargetType="DataGridColumnHeader">
+            <Setter Property="Background" Value="#f0f0f0"/>
+            <Setter Property="Foreground" Value="#333333"/>
+            <Setter Property="Padding" Value="8,6"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="BorderBrush" Value="#cccccc"/>
+            <Setter Property="BorderThickness" Value="0,0,1,1"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+        </Style>
+
+        <Style TargetType="DataGridCell">
+            <Setter Property="Padding" Value="8,6"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+        </Style>
+
+        <Style TargetType="DataGridRow">
+            <Style.Triggers>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="#007ACC"/>
+                    <Setter Property="Foreground" Value="White"/>
+                </Trigger>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#e0e0e0"/>
+                    <Setter Property="Foreground" Value="#333333"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
 
     <Grid Margin="10">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
@@ -23,43 +202,43 @@
 
         <TextBlock Text="Gestión de Empleados"
                    Grid.Row="0" HorizontalAlignment="Center"
-                   FontSize="28" FontWeight="Bold" Margin="0,0,0,20"/>
+                   FontSize="28" FontWeight="Bold" Margin="0,0,0,20"
+                   Foreground="#333333"/>
 
-        <Grid Grid.Row="1" Margin="0,0,0,10">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
-            <Label Content="Buscar Empleado:" VerticalAlignment="Center"/>
-            <TextBox Grid.Column="1" Margin="5,0" Text="{Binding TextoBusqueda, UpdateSourceTrigger=PropertyChanged}" />
-            <Button Content="Buscar" Grid.Column="2" Width="80" Margin="5,0" Command="{Binding BuscarEmpleadosCommand}"/>
-            <Button Content="Nuevo" Grid.Column="3" Width="80" Margin="5,0" Command="{Binding NuevoEmpleadoCommand}"/>
-        </Grid>
+        <Border Grid.Row="1" BorderBrush="#CCCCCC" BorderThickness="1" CornerRadius="4" Padding="10" Margin="0,0,0,10" Background="White">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Orientation="Horizontal" Grid.Column="1" HorizontalAlignment="Right">
+                    <Button Content="Refrescar Lista" Width="120" Margin="5,0,0,0"
+                            Style="{StaticResource BaseButtonStyle}" Command="{Binding LoadEmpleadosCommand}"/>
+                </StackPanel>
+            </Grid>
+        </Border>
 
-        <TextBlock Grid.Row="2" Text="{Binding MensajeEstado}"
-                   Foreground="{Binding MensajeColor}"
-                   HorizontalAlignment="Center" Margin="0,0,0,10"/>
+        <Border Grid.Row="2" BorderBrush="LightGray" BorderThickness="1" CornerRadius="5" Margin="0,0,0,20" Background="White">
+            <DataGrid ItemsSource="{Binding Empleados}"
+                      SelectedItem="{Binding SelectedEmpleado, Mode=TwoWay}"
+                      AutoGenerateColumns="False" IsReadOnly="True"
+                      SelectionMode="Single">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="ID" Binding="{Binding IdEmpleado}" Width="Auto"/>
+                    <DataGridTextColumn Header="Nombre" Binding="{Binding NombreEmpleado}" Width="*"/>
+                    <DataGridTextColumn Header="Apellidos" Binding="{Binding ApellidosEmpleado}" Width="*"/>
+                    <DataGridTextColumn Header="Puesto" Binding="{Binding Puesto}" Width="*"/>
+                    <DataGridTextColumn Header="Extensión" Binding="{Binding Extension}" Width="Auto"/>
+                    <DataGridTextColumn Header="Teléfono" Binding="{Binding TelefonoTrabajo}" Width="Auto"/>
+                    <DataGridTextColumn Header="Departamento" Binding="{Binding Departamento.nombreDepartamento}" Width="*"/>
+                    <DataGridTextColumn Header="Rol" Binding="{Binding Rol.nombreRol}" Width="*"/>
+                    <DataGridTextColumn Header="Usuario" Binding="{Binding Nombre_Usuario}" Width="*"/>
+                    <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="*"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Border>
 
-        <DataGrid Grid.Row="3" ItemsSource="{Binding EmpleadosEncontrados}"
-                  SelectedItem="{Binding EmpleadoSeleccionado, Mode=TwoWay}"
-                  AutoGenerateColumns="False" IsReadOnly="True"
-                  Margin="0,0,0,20"
-                  HeadersVisibility="Column">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="ID" Binding="{Binding IdEmpleado}" Width="Auto"/>
-                <DataGridTextColumn Header="Nombre" Binding="{Binding NombreEmpleado}" Width="*"/>
-                <DataGridTextColumn Header="Apellidos" Binding="{Binding ApellidosEmpleado}" Width="*"/>
-                <DataGridTextColumn Header="Puesto" Binding="{Binding Puesto}" Width="*"/>
-                <DataGridTextColumn Header="Extensión" Binding="{Binding Extension}" Width="Auto"/>
-                <DataGridTextColumn Header="Teléfono" Binding="{Binding TelefonoTrabajo}" Width="Auto"/>
-                <DataGridTextColumn Header="Depto. Cod" Binding="{Binding DeptoCod}" Width="Auto"/>
-                <DataGridTextColumn Header="ID Rol" Binding="{Binding IdRol}" Width="Auto"/>
-            </DataGrid.Columns>
-        </DataGrid>
-
-        <Border Grid.Row="4" BorderBrush="LightGray" BorderThickness="1" Padding="10" CornerRadius="5" Margin="0,0,0,10">
+        <Border Grid.Row="3" BorderBrush="LightGray" BorderThickness="1" Padding="10" CornerRadius="5" Margin="0,0,0,10" Background="White">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -79,37 +258,60 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                <Label Content="ID Empleado:" Grid.Row="0" Grid.Column="0" Margin="5"/>
-                <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding EmpleadoActual.IdEmpleado}" IsReadOnly="True" Margin="5"/>
+                <Label Content="Nombre:" Grid.Row="0" Grid.Column="0" Margin="5"/>
+                <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding SelectedEmpleado.NombreEmpleado, UpdateSourceTrigger=PropertyChanged}"
+                         Margin="5"/>
 
-                <Label Content="Nombre:" Grid.Row="1" Grid.Column="0" Margin="5"/>
-                <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding EmpleadoActual.NombreEmpleado, UpdateSourceTrigger=PropertyChanged}" Margin="5"/>
+                <Label Content="Apellidos:" Grid.Row="1" Grid.Column="0" Margin="5"/>
+                <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding SelectedEmpleado.ApellidosEmpleado, UpdateSourceTrigger=PropertyChanged}"
+                         Margin="5"/>
 
-                <Label Content="Apellidos:" Grid.Row="2" Grid.Column="0" Margin="5"/>
-                <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding EmpleadoActual.ApellidosEmpleado, UpdateSourceTrigger=PropertyChanged}" Margin="5"/>
+                <Label Content="Puesto:" Grid.Row="2" Grid.Column="0" Margin="5"/>
+                <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding SelectedEmpleado.Puesto, UpdateSourceTrigger=PropertyChanged}"
+                         Margin="5"/>
 
-                <Label Content="Puesto:" Grid.Row="3" Grid.Column="0" Margin="5"/>
-                <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding EmpleadoActual.Puesto, UpdateSourceTrigger=PropertyChanged}" Margin="5"/>
+                <Label Content="Extensión:" Grid.Row="3" Grid.Column="0" Margin="5"/>
+                <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding SelectedEmpleado.Extension, UpdateSourceTrigger=PropertyChanged}"
+                         Margin="5"/>
 
-                <Label Content="Extensión:" Grid.Row="4" Grid.Column="0" Margin="5"/>
-                <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding EmpleadoActual.Extension, UpdateSourceTrigger=PropertyChanged}" Margin="5"/>
+                <Label Content="Teléfono Trabajo:" Grid.Row="4" Grid.Column="0" Margin="5"/>
+                <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding SelectedEmpleado.TelefonoTrabajo, UpdateSourceTrigger=PropertyChanged}"
+                         Margin="5"/>
 
-                <Label Content="Teléfono Trabajo:" Grid.Row="5" Grid.Column="0" Margin="5"/>
-                <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding EmpleadoActual.TelefonoTrabajo, UpdateSourceTrigger=PropertyChanged}" Margin="5"/>
+                <Label Content="Departamento:" Grid.Row="0" Grid.Column="3" Margin="5"/>
+                <ComboBox Grid.Row="0" Grid.Column="4"
+                          ItemsSource="{Binding Departamentos}"
+                          DisplayMemberPath="NombreDepartamento" SelectedItem="{Binding SelectedDepartamento, Mode=TwoWay}"
+                          Margin="5"/>
 
-                <Label Content="Cód. Depto:" Grid.Row="6" Grid.Column="0" Margin="5"/>
-                <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding EmpleadoActual.DeptoCod, UpdateSourceTrigger=PropertyChanged}" Margin="5"/>
+                <Label Content="Rol:" Grid.Row="1" Grid.Column="3" Margin="5"/>
+                <ComboBox Grid.Row="1" Grid.Column="4"
+                          ItemsSource="{Binding Roles}"
+                          DisplayMemberPath="nombreRol"
+                          SelectedItem="{Binding SelectedRol, Mode=TwoWay}"
+                          Margin="5"/>
 
-                <Label Content="ID Rol:" Grid.Row="7" Grid.Column="0" Margin="5"/>
-                <TextBox Grid.Row="7" Grid.Column="1" Text="{Binding EmpleadoActual.IdRol, UpdateSourceTrigger=PropertyChanged}" Margin="5"/>
+                <Label Content="Usuario:" Grid.Row="2" Grid.Column="3" Margin="5"/>
+                <TextBox Grid.Row="2" Grid.Column="4" Text="{Binding SelectedEmpleado.Nombre_Usuario, UpdateSourceTrigger=PropertyChanged}"
+                         Margin="5"/>
+
+                <Label Content="Email:" Grid.Row="3" Grid.Column="3" Margin="5"/>
+                <TextBox Grid.Row="3" Grid.Column="4" Text="{Binding SelectedEmpleado.Email, UpdateSourceTrigger=PropertyChanged}"
+                         Margin="5"/>
+
+                <Label Content="Contraseña:" Grid.Row="4" Grid.Column="3" Margin="5"/>
+                <PasswordBox Grid.Row="4" Grid.Column="4"
+                             helpers:PasswordBoxHelper.BoundPassword="{Binding SelectedEmpleado.Contrasena_Hash, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                             Margin="5"/>
             </Grid>
         </Border>
 
-        <StackPanel Grid.Row="5" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,0">
-            <Button Content="Guardar" Width="100" Margin="5" Command="{Binding GuardarEmpleadoCommand}"/>
-            <Button Content="Editar" Width="100" Margin="5" Command="{Binding EditarEmpleadoCommand}"/>
-            <Button Content="Eliminar" Width="100" Margin="5" Command="{Binding EliminarEmpleadoCommand}"/>
-            <Button Content="Limpiar" Width="100" Margin="5" Command="{Binding LimpiarFormularioCommand}"/>
+        <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,0">
+            <Button Content="Guardar" Width="100" Margin="5" Style="{StaticResource AccentButtonStyle}" Command="{Binding SaveEmpleadoCommand}"/>
+            <Button Content="Eliminar" Width="100" Margin="5" Style="{StaticResource DestructiveButtonStyle}" Command="{Binding DeleteEmpleadoCommand}"
+                    IsEnabled="{Binding IsEmpleadoSelected}"/>
+            <Button Content="Cancelar" Width="100" Margin="5" Style="{StaticResource BaseButtonStyle}" Command="{Binding CancelEditCommand}"/>
         </StackPanel>
+
     </Grid>
 </UserControl>
