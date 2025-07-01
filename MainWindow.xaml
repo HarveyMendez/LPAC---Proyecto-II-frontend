@@ -60,6 +60,27 @@
                         BorderThickness="1"
                         Visibility="{Binding CurrentUserRole, Converter={StaticResource RoleVisibility}, ConverterParameter=Admin}"
                         Click="Productos_Click"/>
+                <Button Content="Categorías"
+                        FontSize="16" FontWeight="SemiBold"
+                        Margin="0,5,0,0"
+                        Padding="10"
+                        HorizontalContentAlignment="Left"
+                        Background="#FFFFFF"
+                        BorderBrush="#DDDDDD"
+                        BorderThickness="1"
+                        Visibility="{Binding CurrentUserRole, Converter={StaticResource RoleVisibility}, ConverterParameter=Admin}"
+                        Click="Categorias_Click"/>
+                
+                <Button Content="Departamentos"
+                        FontSize="16" FontWeight="SemiBold"
+                        Margin="0,5,0,0"
+                        Padding="10"
+                        HorizontalContentAlignment="Left"
+                        Background="#FFFFFF"
+                        BorderBrush="#DDDDDD"
+                        BorderThickness="1"
+                        Visibility="{Binding CurrentUserRole, Converter={StaticResource RoleVisibility}, ConverterParameter=Admin}"
+                        Click="Departamentos_Click"/>
 
                 <Button Content="Ordenes"
                         FontSize="16" FontWeight="SemiBold"
