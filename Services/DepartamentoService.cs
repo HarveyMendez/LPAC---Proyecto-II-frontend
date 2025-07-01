@@ -1,4 +1,4 @@
-﻿// DepartamentoService.cs
+﻿
 using LPAC___Proyecto_II_frontend.Models;
 using System;
 using System.Collections.Generic;
@@ -85,7 +85,7 @@ namespace LPAC___Proyecto_II_frontend.Services
             try
             {
                 var departamentoDto = departamento.ToDto();
-                // FIX: Usar 'departamento.CodDepartamento' (mayúscula de tu Model)
+               
                 var response = await _httpClient.PutAsJsonAsync($"{_apiEndpoint}/{departamento.CodDepartamento}", departamentoDto);
                 response.EnsureSuccessStatusCode();
             }

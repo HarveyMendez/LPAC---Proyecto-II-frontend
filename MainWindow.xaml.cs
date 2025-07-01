@@ -25,8 +25,6 @@ namespace LPAC___Proyecto_II_frontend
         {
             try
             {
-                // Crea una nueva instancia de la vista de Empleados y la asigna al ContentControl.
-                // Esta clase (EmpleadoWindow) debe ser un UserControl, no una Window.
                 MainContentArea.Content = new EmpleadoWindow();
             }
             catch (Exception ex)
@@ -43,8 +41,6 @@ namespace LPAC___Proyecto_II_frontend
         {
             try
             {
-                // Crea una nueva instancia de la vista de Clientes y la asigna al ContentControl.
-                // Basado en tu código, esta clase debería ser ClienteView (o ClienteWindow convertida a UserControl).
                 MainContentArea.Content = new ClienteWindow();
             }
             catch (Exception ex)
@@ -61,8 +57,6 @@ namespace LPAC___Proyecto_II_frontend
         {
             try
             {
-                // Crea una nueva instancia de la vista de Productos y la asigna al ContentControl.
-                // Esta clase (ProductoWindow) debe ser un UserControl, no una Window.
                 MainContentArea.Content = new ProductoWindow();
             }
             catch (Exception ex)
@@ -78,9 +72,31 @@ namespace LPAC___Proyecto_II_frontend
         {
             try
             {
-                // Crea una nueva instancia de la vista de Productos y la asigna al ContentControl.
-                // Esta clase (ProductoWindow) debe ser un UserControl, no una Window.
                 MainContentArea.Content = new OrdenWindow();
+            }
+            catch (Exception ex)
+            {
+                // Maneja cualquier error que pueda ocurrir al crear la vista.
+                MessageBox.Show($"Error al cargar la vista de Productos: {ex.Message}", "Error de Carga", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+        private void Categorias_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                MainContentArea.Content = new CategoriaWindow();
+            }
+            catch (Exception ex)
+            {
+                // Maneja cualquier error que pueda ocurrir al crear la vista.
+                MessageBox.Show($"Error al cargar la vista de Productos: {ex.Message}", "Error de Carga", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+        private void Departamentos_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                MainContentArea.Content = new DepartamentoWindow();
             }
             catch (Exception ex)
             {
