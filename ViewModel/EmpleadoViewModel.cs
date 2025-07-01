@@ -1,14 +1,17 @@
-﻿using System.Collections.ObjectModel;
-using System.Windows.Input;
-using System.Threading.Tasks;
-using System.Windows;
-using LPAC___Proyecto_II_frontend.Models; // Models namespace for Empleado
-using LPAC___Proyecto_II_frontend.Services;
-using LPAC___Proyecto_II_frontend.Helpers;
-using LPAC___Proyecto_II_frontend.Commands;
-using System.Linq;
-using LPAC___Proyecto_II_frontend.DTOs; // DTOs namespace for DepartamentoDTO, RolDTO, EmpleadoDTO
+﻿// EmpleadoViewModel.cs
 using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Input;
+
+using LPAC___Proyecto_II_frontend.Models;      // Para Empleado, Departamento, Rol Models
+using LPAC___Proyecto_II_frontend.DTOs;        // Para DTOs como EmpleadoDTO, DepartamentoDTO, RolDTO
+using LPAC___Proyecto_II_frontend.Services;    // Para los servicios
+using LPAC___Proyecto_II_frontend.Helpers;     // Para ViewModelBase (asumiendo que sigue allí)
+using LPAC___Proyecto_II_frontend.Commands;    // Para tu RelayCommand
 
 namespace LPAC___Proyecto_II_frontend.ViewModel
 {
@@ -18,132 +21,88 @@ namespace LPAC___Proyecto_II_frontend.ViewModel
         private readonly DepartamentoService _departamentoService;
         private readonly RolService _rolService;
 
-        // Collection of Empleado Models for the DataGrid
-        private ObservableCollection<Empleado> _empleados;
-        public ObservableCollection<Empleado> Empleados
-        {
-            get => _empleados;
-            set
-            {
-                _empleados = value;
-                OnPropertyChanged(nameof(Empleados));
-            }
-        }
-
-        // The currently selected Empleado Model in the form
-        private Empleado _selectedEmpleado;
+        private Empleado _selectedEmpleado = new Empleado();
         public Empleado SelectedEmpleado
         {
             get => _selectedEmpleado;
             set
             {
-                _selectedEmpleado = value ?? new Empleado(); // Ensure it's never null
-                OnPropertyChanged(nameof(SelectedEmpleado));
+                if (_selectedEmpleado != value)
+                {
+                    _selectedEmpleado = value;
+                    OnPropertyChanged(nameof(SelectedEmpleado));
+                    OnPropertyChanged(nameof(IsEmpleadoSelected));
 
-                // Logic to synchronize ComboBoxes with SelectedEmpleado
-                if (_selectedEmpleado != null)
-                {
-                    // Department: SelectedEmpleado.Departamento is EmpleadoDTO, Departamentos is ObservableCollection<DepartamentoDTO>
-                    if (Departamentos != null && _selectedEmpleado.Departamento != null)
-                    {
-                        SelectedDepartamento = Departamentos.FirstOrDefault(d => d.codDepartamento == _selectedEmpleado.Departamento.codDepartamento);
-                    }
-                    else
-                    {
-                        SelectedDepartamento = null;
-                    }
-
-                    // Rol: SelectedEmpleado.Rol is RolDTO, Roles is ObservableCollection<RolDTO>
-                    if (Roles != null && _selectedEmpleado.Rol != null)
-                    {
-                        SelectedRol = Roles.FirstOrDefault(r => r.idRol == _selectedEmpleado.Rol.idRol);
-                    }
-                    else
-                    {
-                        SelectedRol = null;
-                    }
-                }
-                else
-                {
-                    SelectedDepartamento = null;
-                    SelectedRol = null;
-                }
-
-                if (UpdateEmpleadoCommand is RelayCommand updateCommand)
-                {
-                    updateCommand.RaiseCanExecuteChanged();
-                }
-                if (DeleteEmpleadoCommand is RelayCommand deleteCommand)
-                {
-                    deleteCommand.RaiseCanExecuteChanged();
+                    // Al seleccionar un empleado, actualizamos la selección en los ComboBoxes.
+                    // Departamento: _selectedEmpleado.Departamento es DTO, SelectedDepartamento es Modelo. Convertir DTO a Modelo.
+                    SelectedDepartamento = _selectedEmpleado?.Departamento != null
+                                            ? new Departamento().FromDto(_selectedEmpleado.Departamento)
+                                            : null;
+                    // Rol: _selectedEmpleado.Rol es DTO, SelectedRol es DTO. Asignación directa.
+                    SelectedRol = _selectedEmpleado?.Rol;
                 }
             }
         }
+        public bool IsEmpleadoSelected => SelectedEmpleado != null && SelectedEmpleado.IdEmpleado != 0;
 
-        // Collection of DepartamentoDTOs for the Department ComboBox
-        private ObservableCollection<DepartamentoDTO> _departamentos;
-        public ObservableCollection<DepartamentoDTO> Departamentos
-        {
-            get => _departamentos;
-            set
-            {
-                _departamentos = value;
-                OnPropertyChanged(nameof(Departamentos));
-            }
-        }
 
-        // Selected DepartamentoDTO from the ComboBox
-        private DepartamentoDTO? _selectedDepartamento;
-        public DepartamentoDTO? SelectedDepartamento
+        public ObservableCollection<Empleado> Empleados { get; set; } = new ObservableCollection<Empleado>();
+
+        // Departamentos: Se mantiene como Modelo porque DepartamentoService devuelve Modelos.
+        public ObservableCollection<Departamento> Departamentos { get; set; } = new ObservableCollection<Departamento>();
+
+        // CAMBIO: Roles ahora es de DTOs, consistente con RolService.GetAllRolesAsync()
+        public ObservableCollection<RolDTO> Roles { get; set; } = new ObservableCollection<RolDTO>();
+
+
+        // Se mantiene como Modelo, consistente con la colección Departamentos.
+        private Departamento _selectedDepartamento;
+        public Departamento SelectedDepartamento
         {
             get => _selectedDepartamento;
             set
             {
-                _selectedDepartamento = value;
-                OnPropertyChanged(nameof(SelectedDepartamento));
-                // Assign the selected DTO directly to SelectedEmpleado.Departamento (which is already a DTO)
-                if (SelectedEmpleado != null)
+                if (_selectedDepartamento != value)
                 {
-                    SelectedEmpleado.Departamento = value ?? new DepartamentoDTO();
+                    _selectedDepartamento = value;
+                    OnPropertyChanged(nameof(SelectedDepartamento));
+                    if (SelectedEmpleado != null)
+                    {
+                        // Cuando se selecciona un Departamento en el ComboBox,
+                        // asignamos su DTO (convertido del Modelo) a la propiedad del Empleado.
+                        SelectedEmpleado.Departamento = value?.ToDto();
+                    }
                 }
             }
         }
 
-        // Collection of RolDTOs for the Rol ComboBox
-        private ObservableCollection<RolDTO> _roles;
-        public ObservableCollection<RolDTO> Roles
-        {
-            get => _roles;
-            set
-            {
-                _roles = value;
-                OnPropertyChanged(nameof(Roles));
-            }
-        }
-
-        // Selected RolDTO from the ComboBox
-        private RolDTO? _selectedRol;
-        public RolDTO? SelectedRol
+        // CAMBIO: SelectedRol ahora es de DTOs, consistente con la colección Roles.
+        private RolDTO _selectedRol;
+        public RolDTO SelectedRol
         {
             get => _selectedRol;
             set
             {
-                _selectedRol = value;
-                OnPropertyChanged(nameof(SelectedRol));
-                // Assign the selected DTO directly to SelectedEmpleado.Rol (which is already a DTO)
-                if (SelectedEmpleado != null)
+                if (_selectedRol != value)
                 {
-                    SelectedEmpleado.Rol = value ?? new RolDTO();
+                    _selectedRol = value;
+                    OnPropertyChanged(nameof(SelectedRol));
+                    if (SelectedEmpleado != null)
+                    {
+                        // Cuando se selecciona un Rol en el ComboBox,
+                        // asignamos directamente (ya es DTO).
+                        SelectedEmpleado.Rol = value;
+                    }
                 }
             }
         }
 
-        // Commands
+
         public ICommand LoadEmpleadosCommand { get; }
-        public ICommand AddEmpleadoCommand { get; }
-        public ICommand UpdateEmpleadoCommand { get; }
+        public ICommand SaveEmpleadoCommand { get; }
         public ICommand DeleteEmpleadoCommand { get; }
-        public ICommand ClearSelectionCommand { get; }
+        public ICommand NewEmpleadoCommand { get; }
+        public ICommand CancelEditCommand { get; }
 
         public EmpleadoViewModel()
         {
@@ -151,196 +110,143 @@ namespace LPAC___Proyecto_II_frontend.ViewModel
             _departamentoService = new DepartamentoService();
             _rolService = new RolService();
 
-            _empleados = new ObservableCollection<Empleado>(); // Collection of Models.Empleado
-            _departamentos = new ObservableCollection<DepartamentoDTO>(); // Collection of DTOs
-            _roles = new ObservableCollection<RolDTO>();             // Collection of DTOs
+            LoadEmpleadosCommand = new RelayCommand(async (parameter) => await LoadEmpleadosAsync());
+            // FIX: Ahora SI se convierte SelectedEmpleado a DTO porque EmpleadoService espera DTO.
+            SaveEmpleadoCommand = new RelayCommand(async (parameter) => await SaveEmpleadoAsync(), (parameter) => CanSaveEmpleado());
+            DeleteEmpleadoCommand = new RelayCommand(async (parameter) => await DeleteEmpleadoAsync(), (parameter) => IsEmpleadoSelected);
+            NewEmpleadoCommand = new RelayCommand((parameter) => NewEmpleado());
+            CancelEditCommand = new RelayCommand((parameter) => CancelEdit());
 
-            _selectedEmpleado = new Empleado(); // Initialize Empleado model
-
-            LoadEmpleadosCommand = new RelayCommand(async (param) => await LoadEmpleados());
-            AddEmpleadoCommand = new RelayCommand(async (param) => await AddEmpleado());
-            UpdateEmpleadoCommand = new RelayCommand(async (param) => await UpdateEmpleado(), (param) => CanModifyOrDelete());
-            DeleteEmpleadoCommand = new RelayCommand(async (param) => await DeleteEmpleado(), (param) => CanModifyOrDelete());
-            ClearSelectionCommand = new RelayCommand((param) => ClearSelection());
-
-            _ = LoadInitialData();
+            _ = LoadInitialDataAsync();
         }
 
-        private async Task LoadInitialData()
+        private async Task LoadInitialDataAsync()
         {
-            await LoadDepartamentos();
-            await LoadRoles();
-            await LoadEmpleados();
+            await LoadDepartamentosAsync();
+            await LoadRolesAsync();
+            await LoadEmpleadosAsync();
         }
 
-        private async Task LoadEmpleados()
+        private async Task LoadEmpleadosAsync()
         {
             try
             {
-                // ASSUMPTION: _empleadoService.GetEmpleadosAsync() returns IEnumerable<EmpleadoDTO>
-                var empleadosDto = await _empleadoService.GetEmpleadosAsync();
+                var empleados = await _empleadoService.GetEmpleadosAsync(); // Retorna List<Empleado> (Modelos)
                 Empleados.Clear();
-                foreach (var empDto in empleadosDto)
+                foreach (var empleado in empleados)
                 {
-                    // CONVERSION: Convert EmpleadoDTO to Models.Empleado using FromDto()
-                    Empleados.Add(new Empleado().FromDto(empDto));
-                }
-
-                if (Empleados.Any())
-                {
-                    SelectedEmpleado = Empleados.First();
-                }
-                else
-                {
-                    SelectedEmpleado = new Empleado(); // Ensures form has an object to bind to
+                    Empleados.Add(empleado);
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error al cargar empleados: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                Console.WriteLine($"Error al cargar empleados: {ex.Message}");
+                // TODO: Implementar lógica de notificación al usuario (ej. MessageBox.Show)
             }
         }
 
-        private async Task LoadDepartamentos()
+        // Se añaden Modelos directamente, ya que DepartamentoService.GetAllDepartamentosAsync() los devuelve.
+        private async Task LoadDepartamentosAsync()
         {
             try
             {
-                // ASSUMPTION: _departamentoService.GetAllDepartamentosAsync() returns IEnumerable<DepartamentoDTO>
-                var departamentos = await _departamentoService.GetAllDepartamentosAsync();
+                var departamentos = await _departamentoService.GetAllDepartamentosAsync(); // Retorna List<Departamento>
                 Departamentos.Clear();
-                foreach (var depto in departamentos)
+                foreach (var deptoModel in departamentos)
                 {
-                    Departamentos.Add(depto);
-                }
-
-                if (SelectedEmpleado != null && SelectedEmpleado.Departamento != null)
-                {
-                    SelectedDepartamento = Departamentos.FirstOrDefault(d => d.codDepartamento == SelectedEmpleado.Departamento.codDepartamento);
+                    Departamentos.Add(deptoModel);
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error al cargar departamentos: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                Console.WriteLine($"Error al cargar departamentos: {ex.Message}");
+                // TODO: Implementar lógica de notificación al usuario
             }
         }
 
-        private async Task LoadRoles()
+        // CAMBIO: Ahora se añaden DTOs directamente, ya que RolService.GetAllRolesAsync() los devuelve.
+        private async Task LoadRolesAsync()
         {
             try
             {
-                // ASSUMPTION: _rolService.GetAllRolesAsync() returns IEnumerable<RolDTO>
-                var roles = await _rolService.GetAllRolesAsync();
+                var roles = await _rolService.GetAllRolesAsync(); // Retorna List<RolDTO>
                 Roles.Clear();
-                foreach (var rol in roles)
+                foreach (var rolDto in roles)
                 {
-                    Roles.Add(rol);
-                }
-
-                if (SelectedEmpleado != null && SelectedEmpleado.Rol != null)
-                {
-                    SelectedRol = Roles.FirstOrDefault(r => r.idRol == SelectedEmpleado.Rol.idRol);
+                    Roles.Add(rolDto); // Añade el DTO directamente
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error al cargar roles: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                Console.WriteLine($"Error al cargar roles: {ex.Message}");
+                // TODO: Implementar lógica de notificación al usuario
             }
         }
 
-        private async Task AddEmpleado()
+        private async Task SaveEmpleadoAsync()
         {
-            try
-            {
-                if (string.IsNullOrWhiteSpace(SelectedEmpleado.NombreEmpleado) ||
-                    string.IsNullOrWhiteSpace(SelectedEmpleado.ApellidosEmpleado) ||
-                    SelectedEmpleado.Departamento == null || string.IsNullOrWhiteSpace(SelectedEmpleado.Departamento.codDepartamento) ||
-                    SelectedEmpleado.Rol == null || SelectedEmpleado.Rol.idRol == 0)
-                {
-                    MessageBox.Show("Por favor, completá todos los campos obligatorios (Nombre, Apellidos, Departamento, Rol).", "Datos Incompletos", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    return;
-                }
-
-                // CONVERSION: Convert Models.Empleado to EmpleadoDTO for the service call
-                var nuevoEmpleadoDto = await _empleadoService.CreateEmpleadoAsync(SelectedEmpleado.ToDto());
-                if (nuevoEmpleadoDto != null)
-                {
-                    ClearSelection();
-                    MessageBox.Show("Empleado agregado exitosamente.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
-                    await LoadEmpleados();
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error al agregar empleado: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
-
-        private async Task UpdateEmpleado()
-        {
-            if (!CanModifyOrDelete())
-            {
-                MessageBox.Show("Seleccioná un empleado para modificar.", "Advertencia", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
+            if (SelectedEmpleado == null) return;
 
             try
             {
-                if (string.IsNullOrWhiteSpace(SelectedEmpleado.NombreEmpleado) ||
-                    string.IsNullOrWhiteSpace(SelectedEmpleado.ApellidosEmpleado) ||
-                    SelectedEmpleado.Departamento == null || string.IsNullOrWhiteSpace(SelectedEmpleado.Departamento.codDepartamento) ||
-                    SelectedEmpleado.Rol == null || SelectedEmpleado.Rol.idRol == 0)
-                {
-                    MessageBox.Show("Por favor, completá todos los campos obligatorios (Nombre, Apellidos, Departamento, Rol).", "Datos Incompletos", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    return;
-                }
+                // CAMBIO CLAVE: Convertir SelectedEmpleado (Modelo) a EmpleadoDTO
+                var empleadoDtoToSave = SelectedEmpleado.ToDto();
 
-                // CONVERSION: Convert Models.Empleado to EmpleadoDTO for the service call
-                await _empleadoService.UpdateEmpleadoAsync(SelectedEmpleado.ToDto());
-                MessageBox.Show("Empleado modificado exitosamente.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
-                ClearSelection();
-                await LoadEmpleados();
+                if (SelectedEmpleado.IdEmpleado == 0) // Nuevo empleado
+                {
+                    await _empleadoService.CreateEmpleadoAsync(empleadoDtoToSave);
+                }
+                else // Actualizar empleado existente
+                {
+                    await _empleadoService.UpdateEmpleadoAsync(empleadoDtoToSave);
+                }
+                await LoadEmpleadosAsync();
+                NewEmpleado();
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error al modificar empleado: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                Console.WriteLine($"Error al guardar empleado: {ex.Message}");
+                // TODO: Implementar lógica de notificación al usuario
             }
         }
 
-        private async Task DeleteEmpleado()
+        private bool CanSaveEmpleado()
         {
-            if (!CanModifyOrDelete())
-            {
-                MessageBox.Show("Seleccioná un empleado para eliminar.", "Advertencia", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
-
-            // Corrected MessageBox.Show arguments
-            if (MessageBox.Show($"¿Estás seguro de eliminar a {SelectedEmpleado.NombreEmpleado} {SelectedEmpleado.ApellidosEmpleado}?", "Confirmar Eliminación", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
-            {
-                try
-                {
-                    await _empleadoService.DeleteEmpleadoAsync(SelectedEmpleado.IdEmpleado);
-                    Empleados.Remove(Empleados.FirstOrDefault(e => e.IdEmpleado == SelectedEmpleado.IdEmpleado));
-                    ClearSelection();
-                    MessageBox.Show("Empleado eliminado exitosamente.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Error al eliminar empleado: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
-            }
+            return SelectedEmpleado != null &&
+                   !string.IsNullOrWhiteSpace(SelectedEmpleado.NombreEmpleado) &&
+                   !string.IsNullOrWhiteSpace(SelectedEmpleado.ApellidosEmpleado) &&
+                   !string.IsNullOrWhiteSpace(SelectedEmpleado.Puesto) &&
+                   SelectedEmpleado.Departamento != null &&
+                   SelectedEmpleado.Rol != null;
         }
 
-        private bool CanModifyOrDelete()
+        private async Task DeleteEmpleadoAsync()
         {
-            return SelectedEmpleado != null && SelectedEmpleado.IdEmpleado != 0;
+            if (SelectedEmpleado == null || SelectedEmpleado.IdEmpleado == 0) return;
+
+            try
+            {
+                await _empleadoService.DeleteEmpleadoAsync(SelectedEmpleado.IdEmpleado);
+                await LoadEmpleadosAsync();
+                NewEmpleado();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al eliminar empleado: {ex.Message}");
+                // TODO: Implementar lógica de notificación al usuario
+            }
         }
 
-        private void ClearSelection()
+        private void NewEmpleado()
         {
             SelectedEmpleado = new Empleado();
             SelectedDepartamento = null;
             SelectedRol = null;
+        }
+
+        private void CancelEdit()
+        {
+            NewEmpleado();
         }
     }
 }

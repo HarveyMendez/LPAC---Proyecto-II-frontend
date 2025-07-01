@@ -1,5 +1,6 @@
-﻿using LPAC___Proyecto_II_frontend.Helpers;
-using LPAC___Proyecto_II_frontend.DTOs; // Usamos el DTO para el mapeo
+﻿// Models/Rol.cs
+using LPAC___Proyecto_II_frontend.Helpers;
+using LPAC___Proyecto_II_frontend.DTOs; // <--- ¡MUY IMPORTANTE ESTE USING!
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +12,7 @@ namespace LPAC___Proyecto_II_frontend.Models
     public class Rol : ViewModelBase
     {
         private int _idRol;
-        private string _nombreRol = string.Empty; // Inicialización consistente
+        private string _nombreRol = string.Empty;
 
         public Rol() { }
 
@@ -33,7 +34,7 @@ namespace LPAC___Proyecto_II_frontend.Models
             set { if (_nombreRol != value) { _nombreRol = value; OnPropertyChanged(nameof(NombreRol)); } }
         }
 
-        // Método para convertir este modelo a su DTO correspondiente
+        // ***** ESTE MÉTODO ToDto() DEBE ESTAR AQUÍ *****
         public RolDTO ToDto()
         {
             return new RolDTO
@@ -43,11 +44,11 @@ namespace LPAC___Proyecto_II_frontend.Models
             };
         }
 
-        // Método para popular este modelo desde un DTO
+        // Este método FromDto() también es importante para convertir de DTO a Modelo
         public Rol FromDto(RolDTO dto)
         {
             this.IdRol = dto.idRol;
-            this.NombreRol = dto.nombreRol ?? string.Empty; // Manejar posible null del DTO
+            this.NombreRol = dto.nombreRol ?? string.Empty;
             return this;
         }
     }

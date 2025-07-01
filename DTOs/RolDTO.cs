@@ -11,5 +11,7 @@ namespace LPAC___Proyecto_II_frontend.DTOs
         public int idRol { get; set; }
 
         public string nombreRol { get; set; } = string.Empty;
+
+    
     }
 }

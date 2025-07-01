@@ -1,5 +1,6 @@
-﻿using LPAC___Proyecto_II_frontend.Helpers;
-using LPAC___Proyecto_II_frontend.DTOs; // Usamos el DTO para el mapeo
+﻿// Models/Departamento.cs
+using LPAC___Proyecto_II_frontend.Helpers;
+using LPAC___Proyecto_II_frontend.DTOs; // <--- ¡MUY IMPORTANTE ESTE USING!
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,18 +11,18 @@ namespace LPAC___Proyecto_II_frontend.Models
 {
     public class Departamento : ViewModelBase
     {
-        private string _codDepartamento = string.Empty; // Cambiado a string y inicializado
-        private string _nombreDepartamento = string.Empty; // Corregido el nombre y inicializado
+        private string _codDepartamento = string.Empty;
+        private string _nombreDepartamento = string.Empty;
 
         public Departamento() { }
 
-        public Departamento(string codDepartamento, string nombreDepartamento) // Cambiado el tipo del código
+        public Departamento(string codDepartamento, string nombreDepartamento)
         {
             _codDepartamento = codDepartamento;
             _nombreDepartamento = nombreDepartamento;
         }
 
-        public string CodDepartamento // Cambiado el tipo de la propiedad
+        public string CodDepartamento
         {
             get => _codDepartamento;
             set
@@ -34,7 +35,7 @@ namespace LPAC___Proyecto_II_frontend.Models
             }
         }
 
-        public string NombreDepartamento // Corregido el nombre de la propiedad
+        public string NombreDepartamento
         {
             get => _nombreDepartamento;
             set
@@ -47,7 +48,7 @@ namespace LPAC___Proyecto_II_frontend.Models
             }
         }
 
-        // Método para convertir este modelo a su DTO correspondiente
+        // ***** ESTE MÉTODO ToDto() DEBE ESTAR AQUÍ *****
         public DepartamentoDTO ToDto()
         {
             return new DepartamentoDTO
@@ -57,11 +58,11 @@ namespace LPAC___Proyecto_II_frontend.Models
             };
         }
 
-        // Método para popular este modelo desde un DTO
+        // Este método FromDto() también es importante para convertir de DTO a Modelo
         public Departamento FromDto(DepartamentoDTO dto)
         {
-            this.CodDepartamento = dto.codDepartamento ?? string.Empty; // Manejar posible null del DTO
-            this.NombreDepartamento = dto.nombreDepartamento ?? string.Empty; // Manejar posible null del DTO
+            this.CodDepartamento = dto.codDepartamento ?? string.Empty;
+            this.NombreDepartamento = dto.nombreDepartamento ?? string.Empty;
             return this;
         }
     }

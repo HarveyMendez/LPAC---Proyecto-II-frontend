@@ -10,5 +10,7 @@ namespace LPAC___Proyecto_II_frontend.DTOs
     {
         public string codDepartamento { get; set; } = string.Empty;
         public string nombreDepartamento { get; set; } = string.Empty;
+
+      
     }
 }
