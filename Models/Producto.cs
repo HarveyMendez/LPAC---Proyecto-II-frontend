@@ -119,17 +119,6 @@ namespace LPAC___Proyecto_II_frontend.Models
             }
         }
 
-        private bool _eliminado = false;
-        public bool eliminado
-        {
-            get { return _eliminado; }
-            set
-            {
-                _eliminado = value;
-                OnPropertyChanged(nameof(eliminado));
-            }
-        }
-
         // Constructor para mapear de ProductoDTO del backend a tu modelo de frontend
         public Producto FromDto(ProductoDTO dto)
         {
@@ -140,7 +129,6 @@ namespace LPAC___Proyecto_II_frontend.Models
             puntoReorden = dto.puntoReorden;
             aplicaImpuesto = dto.aplicaImpuesto;
             talla = dto.talla;
-            eliminado = dto.eliminado;
             codCategoria = dto.categoria?.codCategoria;
             descripcionCategoria = dto.categoria?.descripcion ?? string.Empty; // Asegurarse de manejar nulls
             return this;
@@ -158,7 +146,6 @@ namespace LPAC___Proyecto_II_frontend.Models
                 puntoReorden = puntoReorden,
                 aplicaImpuesto = aplicaImpuesto,
                 talla = talla,
-                eliminado = eliminado,
                 categoria = new CategoriaDTO // Asegurarse de que categoria no sea nula
                 {
                     codCategoria = codCategoria,

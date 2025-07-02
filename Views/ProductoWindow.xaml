@@ -274,9 +274,6 @@
 
                 <Label Content="Talla:" Grid.Row="2" Grid.Column="3" Margin="5"/>
                 <TextBox Grid.Row="2" Grid.Column="4" Text="{Binding ProductoActual.talla, UpdateSourceTrigger=PropertyChanged}" Margin="5"/>
-
-                <Label Content="Eliminado:" Grid.Row="3" Grid.Column="3" Margin="5"/>
-                <CheckBox Grid.Row="3" Grid.Column="4" IsChecked="{Binding ProductoActual.eliminado}" VerticalAlignment="Center" Margin="5"/>
             </Grid>
         </Border>
 
