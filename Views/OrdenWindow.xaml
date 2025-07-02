@@ -1,11 +1,12 @@
 ﻿<UserControl x:Class="LPAC___Proyecto_II_frontend.Views.OrdenWindow"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:LPAC___Proyecto_II_frontend.Views"
-             mc:Ignorable="d" 
-             xmlns:viewModel="clr-namespace:LPAC___Proyecto_II_frontend.ViewModel" xmlns:converters="clr-namespace:LPAC___Proyecto_II_frontend.Helpers"
+             mc:Ignorable="d"
+             xmlns:viewModel="clr-namespace:LPAC___Proyecto_II_frontend.ViewModel"
+             xmlns:converters="clr-namespace:LPAC___Proyecto_II_frontend.Helpers"
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.DataContext>
         <viewModel:OrdenViewModel/>
@@ -53,6 +54,87 @@
             <Setter Property="BorderBrush" Value="#cccccc"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="MinHeight" Value="32"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBox">
+                        <Grid>
+                            <ToggleButton x:Name="ToggleButton"
+                                          Grid.Column="2"
+                                          Focusable="false"
+                                          IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                          ClickMode="Press">
+                                <ToggleButton.Template>
+                                    <ControlTemplate TargetType="ToggleButton">
+                                        <Border Background="{TemplateBinding Background}"
+                                                BorderBrush="{TemplateBinding BorderBrush}"
+                                                BorderThickness="{TemplateBinding BorderThickness}"
+                                                CornerRadius="0">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <ContentPresenter Grid.Column="0"
+                                                                  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                                  VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                                                  Margin="{TemplateBinding Padding}" />
+                                                <Path x:Name="Arrow"
+                                                      Grid.Column="1"
+                                                      Fill="{TemplateBinding Foreground}"
+                                                      HorizontalAlignment="Center"
+                                                      VerticalAlignment="Center"
+                                                      Data="M 0 0 L 4 4 L 8 0 Z"
+                                                      Margin="0,0,8,0" />
+                                            </Grid>
+                                        </Border>
+                                    </ControlTemplate>
+                                </ToggleButton.Template>
+                            </ToggleButton>
+                            <ContentPresenter x:Name="ContentSite"
+                                              Content="{TemplateBinding SelectionBoxItem}"
+                                              ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                              ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
+                                              ContentStringFormat="{TemplateBinding SelectionBoxItemStringFormat}"
+                                              IsHitTestVisible="False"
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                              Margin="{TemplateBinding Padding}" />
+                            <Popup x:Name="Popup"
+                                   AllowsTransparency="True"
+                                   IsOpen="{TemplateBinding IsDropDownOpen}"
+                                   Placement="Bottom"
+                                   PopupAnimation="{DynamicResource {x:Static SystemParameters.ComboBoxPopupAnimationKey}}">
+                                <Border x:Name="DropDownBorder"
+                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                        Background="{TemplateBinding Background}"
+                                        MaxHeight="{TemplateBinding MaxDropDownHeight}"
+                                        MinWidth="{Binding ActualWidth, ElementName=ToggleButton}">
+                                    <ScrollViewer x:Name="ScrollViewer"
+                                                  SnapsToDevicePixels="true">
+                                        <StackPanel IsItemsHost="True"
+                                                    KeyboardNavigation.DirectionalNavigation="Contained" />
+                                    </ScrollViewer>
+                                </Border>
+                            </Popup>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="HasItems" Value="false">
+                                <Setter TargetName="ScrollViewer" Property="Height" Value="0"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter TargetName="ToggleButton" Property="Background" Value="#D0D0D0"/>
+                            </Trigger>
+                            <Trigger Property="IsDropDownOpen" Value="true">
+                                <Setter TargetName="ToggleButton" Property="Background" Value="#C0C0C0"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
 
         <Style TargetType="ComboBoxItem">
@@ -91,9 +173,9 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
                         <Border Background="{TemplateBinding Background}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="4">
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="4">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                     </ControlTemplate>
@@ -197,22 +279,19 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <!-- Encabezado -->
         <TextBlock Grid.Row="0" FontSize="16" FontWeight="Bold" Margin="0,0,0,10"><Run Text="Nueva orden de venta"/><LineBreak/><Run/></TextBlock>
 
-        <!-- Sección Cliente -->
         <GroupBox Grid.Row="1" Header="Empresa Cliente" Margin="0,0,0,10">
             <StackPanel>
-                <ComboBox Margin="5" ItemsSource="{Binding Clientes}" DisplayMemberPath="Name" SelectedItem="{Binding ClienteSeleccionado}"  Foreground="Black"/>
+                <ComboBox Margin="5" ItemsSource="{Binding Clientes}" DisplayMemberPath="NombreCompania" SelectedItem="{Binding ClienteSeleccionado}"  Foreground="Black"/>
                 <DatePicker Margin="5" SelectedDate="{Binding FechaOrden}"/>
             </StackPanel>
         </GroupBox>
 
-        <!-- Detalles de la Orden -->
         <GroupBox Grid.Row="2" Header="Detalles de la Orden" Margin="0,0,0,10">
             <Grid>
                 <DataGrid AutoGenerateColumns="False" ItemsSource="{Binding ItemsOrden}"
-                  SelectedItem="{Binding ItemOrdenSeleccionado}">
+                          SelectedItem="{Binding ItemOrdenSeleccionado}">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Código" Binding="{Binding Producto.idProducto}" IsReadOnly="True"/>
                         <DataGridTextColumn Header="Nombre" Binding="{Binding Producto.nombreProducto}" IsReadOnly="True"/>
@@ -225,14 +304,15 @@
             </Grid>
         </GroupBox>
 
-        <!-- Acciones de Producto -->
         <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="0,0,0,10">
-            <ComboBox Margin="5" Width="150" ItemsSource="{Binding ProductosDisponibles}" DisplayMemberPath="Name" SelectedItem="{Binding ProductoSeleccionado}" Foreground="Black"/>
-            <Button Content="Eliminar producto" Margin="5" Command="{Binding EliminarProductoCommand}"/>
-            <Button Content="Añadir producto" Margin="5" Command="{Binding AgregarProductoCommand}"/>
+            <ComboBox Margin="5" Width="150" ItemsSource="{Binding ProductosDisponibles}" DisplayMemberPath="nombreProducto" SelectedItem="{Binding ProductoSeleccionado}" Foreground="Black"/>
+
+            <Button Content="Eliminar producto" Margin="5" Style="{StaticResource DestructiveButtonStyle}"
+                    Command="{Binding EliminarProductoCommand}"/>
+            <Button Content="Añadir producto" Margin="5" Style="{StaticResource AccentButtonStyle}"
+                    Command="{Binding AgregarProductoCommand}"/>
         </StackPanel>
 
-        <!-- Resumen de la Orden -->
         <GroupBox Grid.Row="4" Header="Resumen de la Orden" Margin="0,0,0,10">
             <StackPanel>
                 <StackPanel Orientation="Horizontal">
@@ -250,7 +330,7 @@
             </StackPanel>
         </GroupBox>
 
-        <!-- Botón Imprimir -->
-        <Button Grid.Row="5" Content="Imprimir factura" Command="{Binding GenerarFacturaCommand}"/>
+        <Button Grid.Row="5" Content="Imprimir factura" Command="{Binding GenerarFacturaCommand}" Style="{StaticResource AccentButtonStyle}"/>
+
     </Grid>
 </UserControl>
