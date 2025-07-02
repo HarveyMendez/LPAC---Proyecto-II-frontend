@@ -14,10 +14,9 @@ namespace LPAC___Proyecto_II_frontend.Services
 
         public CategoriaService()
         {
-            _httpClient = new HttpClient();
+            _httpClient = AuthService.GetHttpClient();
             string baseUrlFromConfig = AppConfig.GetApiBaseUrl();
             _apiEndpoint = $"{baseUrlFromConfig}/api/Categoria";
-            _httpClient.BaseAddress = new Uri(baseUrlFromConfig);
         }
 
         public async Task<List<CategoriaDTO>> GetCategoriasAsync()

@@ -19,12 +19,11 @@ namespace LPAC___Proyecto_II_frontend.Services
         /// </summary>
         public ClienteService()
         {
-            _httpClient = new HttpClient();
+            _httpClient = AuthService.GetHttpClient();
 
             // Obtiene la URL base de la API desde la configuración de la aplicación.
             string baseUrlFromConfig = AppConfig.GetApiBaseUrl();
             _apiEndpoint = $"{baseUrlFromConfig}/api/Cliente"; // Asume que tu endpoint de clientes es /api/Cliente
-            _httpClient.BaseAddress = new Uri(baseUrlFromConfig);
         }
 
         /// <summary>

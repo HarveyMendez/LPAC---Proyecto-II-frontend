@@ -16,10 +16,9 @@ namespace LPAC___Proyecto_II_frontend.Services
 
         public EmpleadoService()
         {
-            _httpClient = new HttpClient();
+            _httpClient = AuthService.GetHttpClient();
             string baseUrlFromConfig = AppConfig.GetApiBaseUrl(); // Asumo que tienes una clase AppConfig
             _apiEndpoint = $"{baseUrlFromConfig}/api/Empleado";
-            _httpClient.BaseAddress = new Uri(baseUrlFromConfig);
         }
 
         // CAMBIO CLAVE: Este método ahora devuelve una lista de MODELOS (Empleado),

@@ -16,10 +16,9 @@ namespace LPAC___Proyecto_II_frontend.Services
 
         public RolService()
         {
-            _httpClient = new HttpClient();
+            _httpClient = AuthService.GetHttpClient();
             string baseUrlFromConfig = AppConfig.GetApiBaseUrl(); // Asumo que AppConfig existe
             _apiEndpoint = $"{baseUrlFromConfig}/api/Rol"; // Endpoint del controlador de Roles
-            _httpClient.BaseAddress = new Uri(baseUrlFromConfig);
         }
 
         // CAMBIO CRUCIAL: Ahora devuelve List<RolDTO>

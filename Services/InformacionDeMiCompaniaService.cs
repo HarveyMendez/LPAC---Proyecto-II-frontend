@@ -18,10 +18,9 @@ namespace LPAC___Proyecto_II_frontend.Services
 
         public InformacionDeMiCompaniaService()
         {
-            _httpClient = new HttpClient();
+            _httpClient = AuthService.GetHttpClient();
             string baseUrlFromConfig = AppConfig.GetApiBaseUrl();
             _apiEndpoint = $"{baseUrlFromConfig}/api/InfoCompania";
-            _httpClient.BaseAddress = new Uri(baseUrlFromConfig);
         }
 
         public async Task<InformacionDeMiCompania> GetInfoActual()

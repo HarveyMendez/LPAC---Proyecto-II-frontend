@@ -69,6 +69,9 @@ namespace LPAC___Proyecto_II_frontend.Services
             }
         }
 
+        public static HttpClient GetHttpClient() => _httpClient;
+
+
         public static void Logout()
         {
             Token = null;

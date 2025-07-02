@@ -17,10 +17,9 @@ namespace LPAC___Proyecto_II_frontend.Services
 
         public ProductoService()
         {
-            _httpClient = new HttpClient();
+            _httpClient = AuthService.GetHttpClient();
             string baseUrlFromConfig = AppConfig.GetApiBaseUrl(); 
             _apiEndpoint = $"{baseUrlFromConfig}/api/Producto";
-            _httpClient.BaseAddress = new Uri(baseUrlFromConfig);
         }
 
         public async Task<List<Producto>> GetAllProductosAsync(string searchTerm = null)
