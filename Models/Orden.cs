@@ -66,6 +66,8 @@ namespace LPAC___Proyecto_II_frontend.Models
         public Orden FromDto(OrdenDTO dto)
         {
             this.IdOrden = dto.idOrden;
+            this.ClienteId = dto.Cliente.IdCliente;
+            this.IdEmpleado = dto.Empleado.idEmpleado;
             this.FechaOrden = dto.fecha_orden;
             this.DireccionViaje = dto.direccion_viaje;
             this.CiudadViaje = dto.cuidad_viaje;

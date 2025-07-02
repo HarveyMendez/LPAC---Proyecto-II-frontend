@@ -60,7 +60,7 @@ namespace LPAC___Proyecto_II_frontend.Models
         {
             return new ClienteDTO
             {
-                ClienteId = this.ClienteId,
+                IdCliente = this.ClienteId,
                 NombreCompania = this.NombreCompania,
                 NombreContacto = this.NombreContacto,
                 ApellidoContacto = this.ApellidoContacto,
@@ -78,7 +78,7 @@ namespace LPAC___Proyecto_II_frontend.Models
   
         public Cliente FromDto(ClienteDTO dto)
         {
-            this.ClienteId = dto.ClienteId;
+            this.ClienteId = dto.IdCliente;
             this.NombreCompania = dto.NombreCompania;
             this.NombreContacto = dto.NombreContacto;
             this.ApellidoContacto = dto.ApellidoContacto;

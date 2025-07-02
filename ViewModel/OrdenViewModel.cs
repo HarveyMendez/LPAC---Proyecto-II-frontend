@@ -6,8 +6,11 @@ using LPAC___Proyecto_II_frontend.Services;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 
 namespace LPAC___Proyecto_II_frontend.ViewModel
@@ -17,6 +20,7 @@ namespace LPAC___Proyecto_II_frontend.ViewModel
         private readonly ClienteService _clienteService;
         private readonly ProductoService _productoService;
         private readonly InformacionDeMiCompaniaService _infoCompaniaService;
+        private readonly OrdenService _ordenService;
 
         // Comandos
         public ICommand AgregarProductoCommand { get; private set; }
@@ -177,6 +181,7 @@ namespace LPAC___Proyecto_II_frontend.ViewModel
             _clienteService = new ClienteService();
             _productoService = new ProductoService();
             _infoCompaniaService = new InformacionDeMiCompaniaService();
+            _ordenService = new OrdenService();
 
             ItemsOrden = new ObservableCollection<OrderItemViewModel>();
             Clientes = new ObservableCollection<Cliente>();
@@ -305,7 +310,7 @@ namespace LPAC___Proyecto_II_frontend.ViewModel
             OnPropertyChanged(nameof(Total));
         }
 
-        private void ExecuteGenerarFactura(object obj)
+        private async void ExecuteGenerarFactura(object obj)
         {
             if (ClienteSeleccionado == null)
             {
@@ -321,13 +326,42 @@ namespace LPAC___Proyecto_II_frontend.ViewModel
                 return;
             }
 
-            var ordenDto = ToOrdenDTO();
+            try
+            {
+                MensajeEstado = "Generando factura...";
+                MensajeColor = "Blue";
 
-            // TODO: Llamar al servicio para generar PDF
-            // _ordenService.GenerarFactura(ordenDto);
+                var ordenDto = ToOrdenDTO();
 
-            MensajeEstado = "Factura generada correctamente";
-            MensajeColor = "Green";
+                if (ordenDto == null || ordenDto.Cliente == null || ordenDto.Cliente.IdCliente == 0)
+                {
+                    MessageBox.Show("Error al preparar los datos de la orden", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
+                var ordenCreada = await _ordenService.CreateOrdenAsync(ordenDto);
+
+                if(ordenCreada == null)
+                {
+                    MessageBox.Show("Error al crear la orden. Por favor, intente nuevamente.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+                var pdfBytes = await _ordenService.GenerateInvoicePdfAsync(ordenDto);
+
+                string fileName = $"Factura_{DateTime.Now:yyyyMMdd_HHmmss}.pdf";
+
+                await File.WriteAllBytesAsync(fileName, pdfBytes);
+
+                Process.Start(new ProcessStartInfo(fileName) { UseShellExecute = true });
+
+                MensajeEstado = $"Factura generada: {fileName}";
+                MensajeColor = "Green";
+            }
+            catch (Exception ex)
+            {
+                MensajeEstado = $"Error al generar factura: {ex.Message}";
+                MensajeColor = "Red";
+            }
         }
 
         private bool CanExecuteGenerarFactura(object obj) =>
@@ -335,17 +369,26 @@ namespace LPAC___Proyecto_II_frontend.ViewModel
 
         public OrdenDTO ToOrdenDTO()
         {
+            if (ClienteSeleccionado == null)
+            {
+                MessageBox.Show("No hay cliente seleccionado al generar el DTO", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return null;
+            }
+
+            var clienteDto = ClienteSeleccionado.ToDto();
+
+
             return new OrdenDTO
             {
-                fecha_orden = FechaOrden,
+                fecha_orden = DateTime.Now,
                 direccion_viaje = DireccionViaje,
                 cuidad_viaje = CiudadViaje,
                 provincia_viaje = ProvinciaViaje,
                 pais_viaje = PaisViaje,
                 telefono_viaje = TelefonoViaje,
-                fecha_viaje = DateTime.Now.AddDays(3), // Ejemplo: 3 días después
-                Cliente = ClienteSeleccionado.ToDto(),
-                Empleado = new EmpleadoDTO(), // TODO: Reemplazar con empleado real
+                fecha_viaje = FechaOrden,
+                Cliente = clienteDto,
+                Empleado = new EmpleadoDTO { idEmpleado = 11},
                 Detalles = ItemsOrden.Select(item => new DetalleOrdenDTO
                 {
                     cantidad = (float)item.Cantidad,

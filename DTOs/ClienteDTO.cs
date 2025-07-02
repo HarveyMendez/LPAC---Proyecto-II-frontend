@@ -13,7 +13,7 @@ namespace LPAC___Proyecto_II_frontend.DTOs
     /// </summary>
     public class ClienteDTO
     {
-        public int ClienteId { get; set; }
+        public int IdCliente { get; set; }
         public string NombreCompania { get; set; } = string.Empty;
         public string NombreContacto { get; set; } = string.Empty;
         public string ApellidoContacto { get; set; } = string.Empty;
