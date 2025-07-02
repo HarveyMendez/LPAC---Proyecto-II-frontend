@@ -1,4 +1,5 @@
-﻿using LPAC___Proyecto_II_frontend.Helpers;
+﻿using LPAC___Proyecto_II_frontend.DTOs;
+using LPAC___Proyecto_II_frontend.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -46,5 +47,33 @@ namespace LPAC___Proyecto_II_frontend.Models
         public string PaisViaje { get => paisViaje; set { if (paisViaje != value) { paisViaje = value; OnPropertyChanged(nameof(PaisViaje)); } } }
         public string TelefonoViaje { get => telefonoViaje; set { if (telefonoViaje != value) { telefonoViaje = value; OnPropertyChanged(nameof(TelefonoViaje)); } } }
         public DateTime FechaViaje { get => fechaViaje; set { if (fechaViaje != value) { fechaViaje = value; OnPropertyChanged(nameof(FechaViaje)); } } }
+
+        public OrdenDTO ToDto()
+        {
+            return new OrdenDTO
+            {
+                idOrden = this.IdOrden,
+                fecha_orden = this.FechaOrden,
+                direccion_viaje = this.DireccionViaje,
+                cuidad_viaje = this.CiudadViaje,
+                provincia_viaje = this.ProvinciaViaje,
+                pais_viaje = this.PaisViaje,
+                telefono_viaje = this.TelefonoViaje,
+                fecha_viaje = this.FechaViaje
+            };
+        }
+
+        public Orden FromDto(OrdenDTO dto)
+        {
+            this.IdOrden = dto.idOrden;
+            this.FechaOrden = dto.fecha_orden;
+            this.DireccionViaje = dto.direccion_viaje;
+            this.CiudadViaje = dto.cuidad_viaje;
+            this.ProvinciaViaje = dto.provincia_viaje;
+            this.PaisViaje = dto.pais_viaje;
+            this.TelefonoViaje = dto.telefono_viaje;
+            this.FechaViaje = dto.fecha_viaje;
+            return this;
+        }
     }
 }

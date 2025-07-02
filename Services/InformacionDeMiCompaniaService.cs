@@ -7,6 +7,7 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace LPAC___Proyecto_II_frontend.Services
 {
@@ -57,12 +58,14 @@ namespace LPAC___Proyecto_II_frontend.Services
             }
             catch (HttpRequestException ex)
             {
-                Console.WriteLine($"Error al obtener informacion de la compañia: {ex.Message}");
+                MessageBox.Show($"Error al obtener informacion de la compañia httpEX: {ex.Message}", "Error",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
                 throw;
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error inesperado al obtener informacion de la compañia: {ex.Message}");
+                MessageBox.Show($"Error inesperado al obtener informacion de la compañia EX: {ex.Message}", "Error",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
                 throw;
             }
         }
